@@ -1,114 +1,42 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
 export function ParticleBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [particles, setParticles] = useState<
+    { id: number; left: string; top: string; delay: string; duration: string; size: string }[]
+  >([])
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let animationFrameId: number
-    let particles: Particle[] = []
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-
-    class Particle {
-      x: number
-      y: number
-      vx: number
-      vy: number
-      size: number
-
-      constructor() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.vx = (Math.random() - 0.5) * 0.5
-        this.vy = (Math.random() - 0.5) * 0.5
-        this.size = Math.random() * 2 + 1
-      }
-
-      update() {
-        this.x += this.vx
-        this.y += this.vy
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1
-      }
-
-      draw() {
-        if (!ctx) return
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(124, 58, 237, 0.3)' // Primary color with opacity
-        ctx.fill()
-      }
-    }
-
-    const initParticles = () => {
-      particles = []
-      const numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000)
-      for (let i = 0; i < numberOfParticles; i++) {
-        particles.push(new Particle())
-      }
-    }
-
-    const drawLines = () => {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x
-          const dy = particles[i].y - particles[j].y
-          const distance = Math.sqrt(dx * dx + dy * dy)
-
-          if (distance < 120) {
-            ctx.beginPath()
-            ctx.strokeStyle = `rgba(59, 130, 246, ${0.2 - distance / 600})` // Secondary color
-            ctx.lineWidth = 1
-            ctx.moveTo(particles[i].x, particles[i].y)
-            ctx.lineTo(particles[j].x, particles[j].y)
-            ctx.stroke()
-          }
-        }
-      }
-    }
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      particles.forEach((particle) => {
-        particle.update()
-        particle.draw()
-      })
-
-      drawLines()
-      animationFrameId = requestAnimationFrame(animate)
-    }
-
-    resizeCanvas()
-    initParticles()
-    animate()
-
-    window.addEventListener('resize', () => {
-      resizeCanvas()
-      initParticles()
-    })
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas)
-      cancelAnimationFrame(animationFrameId)
-    }
+    // Generate particles for CSS animation
+    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 5}s`,
+      duration: `${8 + Math.random() * 10}s`,
+      size: `${2 + Math.random() * 4}px`,
+    }))
+    setParticles(newParticles)
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 z-0 pointer-events-none opacity-50"
-      aria-hidden="true"
-    />
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-60">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(74,108,247,0.1)_0%,rgba(5,5,8,0)_70%)]" />
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute rounded-full bg-white animate-float"
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+            animationDelay: p.delay,
+            animationDuration: p.duration,
+            boxShadow: '0 0 15px 2px rgba(123, 47, 247, 0.4)',
+            opacity: 0.3 + Math.random() * 0.4,
+          }}
+        />
+      ))}
+    </div>
   )
 }

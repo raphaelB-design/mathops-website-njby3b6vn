@@ -1,14 +1,14 @@
 import { Outlet } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { Menu, X, Hexagon } from 'lucide-react'
+import { Menu, X, Hexagon, Lock, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const NAV_LINKS = [
   { name: 'Home', href: '#' },
   { name: 'Serviços', href: '#servicos' },
-  { name: 'Sobre', href: '#sobre' },
-  { name: 'Contato', href: '#contato' },
+  { name: 'Casos de Sucesso', href: '#casos' },
+  { name: 'Blog', href: '#blog' },
 ]
 
 export default function Layout() {
@@ -22,40 +22,58 @@ export default function Layout() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[var(--bg-primary)]">
       <header
         className={cn(
-          'fixed top-0 z-50 w-full transition-all duration-300',
+          'fixed top-0 z-[1000] w-full transition-all duration-500',
           isScrolled
-            ? 'bg-background/90 backdrop-blur-md border-b border-white/5 shadow-sm py-3'
-            : 'bg-transparent py-5',
+            ? 'scrolled bg-[rgba(5,5,8,0.85)] backdrop-blur-xl border-b border-[var(--glass-border)] py-4'
+            : 'bg-transparent py-6',
         )}
       >
         <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2 group">
-            <Hexagon className="h-8 w-8 text-primary group-hover:text-secondary transition-colors" />
-            <span className="text-xl font-bold tracking-tight text-gradient">MathOps</span>
+          <a href="#" className="flex items-center gap-3 group">
+            <Hexagon className="h-8 w-8 text-[var(--accent-gold)] group-hover:scale-105 transition-transform duration-300" />
+            <span className="text-3xl font-serif tracking-wide text-[#f5f5f7]">MATHOPS</span>
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
+          <nav className="hidden lg:flex items-center gap-8">
+            <div className="flex items-center gap-6">
+              {NAV_LINKS.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-sm font-medium text-[var(--text-secondary)] hover:text-[#f5f5f7] transition-colors"
+                >
+                  {link.name}
+                </a>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-6 border-l border-[var(--glass-border)] pl-6">
               <a
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                href="#cliente"
+                className="flex items-center gap-2 text-sm font-medium text-[var(--accent-gold)] hover:text-yellow-200 transition-colors"
               >
-                {link.name}
+                <Lock className="h-4 w-4" />
+                Área do Cliente
               </a>
-            ))}
-            <Button className="bg-gradient-primary border-0 rounded-full hover:scale-105 transition-transform shadow-[0_0_15px_rgba(124,58,237,0.3)]">
-              <a href="#contato">Fale Conosco</a>
-            </Button>
+              <Button
+                className="bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] border-0 rounded-full hover:scale-105 transition-all duration-300 shadow-[0_4px_20px_rgba(74,108,247,0.3)] text-[#f5f5f7] font-medium px-6 h-11"
+                asChild
+              >
+                <a href="#contato" className="flex items-center gap-2">
+                  Fale Conosco
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
           </nav>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden text-foreground p-2"
+            className="lg:hidden text-[var(--text-primary)] p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
@@ -64,19 +82,30 @@ export default function Layout() {
 
         {/* Mobile Nav */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-card/95 backdrop-blur-lg border-b border-white/5 p-4 animate-in slide-in-from-top-2">
+          <div className="lg:hidden absolute top-full left-0 w-full bg-[rgba(5,5,8,0.95)] backdrop-blur-xl border-b border-[var(--glass-border)] p-4 animate-in slide-in-from-top-2">
             <nav className="flex flex-col gap-4 text-center">
               {NAV_LINKS.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-lg font-medium text-foreground py-2"
+                  className="text-lg font-medium text-[var(--text-primary)] py-2 border-b border-[var(--glass-border)]"
                 >
                   {link.name}
                 </a>
               ))}
-              <Button className="bg-gradient-primary w-full rounded-full mt-2" asChild>
+              <a
+                href="#cliente"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 text-lg font-medium text-[var(--accent-gold)] py-2 border-b border-[var(--glass-border)]"
+              >
+                <Lock className="h-5 w-5" />
+                Área do Cliente
+              </a>
+              <Button
+                className="bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)] w-full rounded-full mt-4 h-12"
+                asChild
+              >
                 <a href="#contato" onClick={() => setIsMobileMenuOpen(false)}>
                   Fale Conosco
                 </a>
@@ -90,11 +119,11 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-white/10 bg-card py-8 mt-20">
-        <div className="container mx-auto px-4 md:px-6 text-center text-muted-foreground text-sm">
-          <div className="flex justify-center items-center gap-2 mb-4">
-            <Hexagon className="h-5 w-5 text-primary" />
-            <span className="font-bold text-foreground">MathOps</span>
+      <footer className="border-t border-[var(--glass-border)] bg-[rgba(255,255,255,0.01)] py-12 mt-20">
+        <div className="container mx-auto px-4 md:px-6 text-center text-[var(--text-secondary)] text-sm">
+          <div className="flex justify-center items-center gap-2 mb-6">
+            <Hexagon className="h-6 w-6 text-[var(--accent-gold)]" />
+            <span className="font-serif text-2xl text-[var(--text-primary)]">MATHOPS</span>
           </div>
           <p>© {new Date().getFullYear()} MathOps. Todos os direitos reservados.</p>
         </div>
