@@ -65,7 +65,7 @@ export function MetricsBento() {
           {metrics.map((metric, i) => (
             <div
               key={i}
-              className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[16px] p-6 backdrop-blur-xl transition-all duration-[400ms] hover:-translate-y-[4px] hover:shadow-[0_8px_30px_rgba(74,108,247,0.15)] group relative overflow-hidden"
+              className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[16px] p-6 backdrop-blur-xl transition-all duration-500 hover:-translate-y-[4px] hover:shadow-[0_8px_30px_rgba(74,108,247,0.15)] group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
