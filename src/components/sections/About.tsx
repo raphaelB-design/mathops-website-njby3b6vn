@@ -2,81 +2,116 @@ import { Badge } from '@/components/ui/badge'
 import { useScrollReveal } from '@/hooks/use-scroll-reveal'
 import { cn } from '@/lib/utils'
 
+const EXPERTISE = [
+  { label: 'Diagnóstico Tributário', years: '10+' },
+  { label: 'Lean Six Sigma', years: 'Black Belt' },
+  { label: 'Inteligência de Dados', years: 'Avançado' },
+  { label: 'Matemática Aplicada', years: 'Especialista' },
+]
+
 const BADGES = [
-  'Metodologia TAIE',
-  'Cultura Data-Driven',
+  'Modelagem Matemática',
   'Lean Six Sigma',
-  'Python & RPA',
-  'Business Intelligence',
+  'Engenharia de Dados',
+  'Tributário',
+  'Governança',
+  'Resultados Mensuráveis',
 ]
 
 export function AboutSection() {
   const { ref, isRevealed } = useScrollReveal()
 
   return (
-    <section
-      id="sobre"
-      className="py-24 bg-card/30 relative border-y border-white/5 overflow-hidden"
-    >
-      <div className="absolute left-0 top-1/2 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[120px] -z-10 -translate-y-1/2 pointer-events-none" />
-
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="sobre" className="py-28 relative">
+      <div className="max-w-7xl mx-auto px-6">
         <div
           ref={ref}
           className={cn(
-            'flex flex-col lg:flex-row items-center gap-16 max-w-6xl mx-auto opacity-0',
+            'grid grid-cols-1 lg:grid-cols-2 gap-16 items-center opacity-0',
             isRevealed && 'animate-fade-in-up',
           )}
         >
-          <div className="w-full lg:w-2/5 flex justify-center">
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-secondary to-primary rounded-full blur opacity-30 group-hover:opacity-60 transition duration-700"></div>
-              <div className="relative h-72 w-72 rounded-full bg-card border-2 border-white/10 flex items-center justify-center overflow-hidden shadow-2xl">
-                <div className="h-full w-full bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center">
-                  <span className="text-7xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-br from-secondary to-primary">
-                    M
-                  </span>
+          {/* Left — avatar + expertise */}
+          <div className="flex flex-col gap-8">
+            <div className="flex items-center gap-6">
+              {/* Avatar */}
+              <div className="relative shrink-0">
+                <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-primary/20 to-secondary/10 blur-xl" />
+                <div className="relative h-24 w-24 rounded-full border border-white/10 bg-card flex items-center justify-center overflow-hidden">
+                  <span className="font-display text-3xl font-bold text-gradient">RB</span>
                 </div>
               </div>
+              <div>
+                <h3 className="font-display text-2xl font-bold text-foreground">Raphael Batista</h3>
+                <p className="text-primary text-sm font-medium mt-0.5">
+                  Founder & Principal Consultant
+                </p>
+                <p className="text-muted-foreground text-sm mt-1">São José dos Campos — SP</p>
+              </div>
+            </div>
+
+            {/* Expertise grid */}
+            <div className="grid grid-cols-2 gap-3">
+              {EXPERTISE.map((e, i) => (
+                <div key={i} className="rounded-xl border border-white/[0.06] bg-card/40 p-4">
+                  <p className="font-display font-bold text-foreground text-sm">{e.years}</p>
+                  <p className="text-muted-foreground text-xs mt-0.5">{e.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2">
+              {BADGES.map((b) => (
+                <span
+                  key={b}
+                  className="px-3 py-1 text-xs font-medium text-muted-foreground rounded-full border border-white/[0.06] bg-white/[0.02] hover:border-primary/20 hover:text-foreground transition-colors"
+                >
+                  {b}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="w-full lg:w-3/5 space-y-6 text-center lg:text-left">
+          {/* Right — copy */}
+          <div className="space-y-6">
             <div>
-              <h2 className="text-3xl md:text-5xl font-display font-bold mb-3">
-                O Core da <span className="text-gradient">MathOps</span>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
+                Sobre
+              </p>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground leading-tight">
+                Matemática aplicada
+                <span className="text-gradient"> onde o dinheiro </span>
+                está em jogo.
               </h2>
-              <h3 className="text-xl text-secondary font-medium">
-                Fundada por Raphael Batista da Silva
-              </h3>
             </div>
 
-            <div className="space-y-4 text-muted-foreground leading-relaxed text-lg">
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Nascemos da convicção de que intuição não escala operações. A MathOps atua na
-                intersecção entre a Engenharia de Processos e a Ciência de Dados para reestruturar
-                empresas de dentro para fora.
+                Especialista em unir profundidade analítica da matemática com eficiência do Lean Six
+                Sigma e o poder da inteligência de dados. A MathOps nasceu da evidência de que as
+                maiores perdas tributárias e operacionais das empresas não vêm de irregularidades —
+                vêm de dados não cruzados.
               </p>
               <p>
-                Nosso compromisso não é apenas entregar relatórios ou softwares, mas sim implementar
-                um <strong>Ecossistema de Inteligência Operacional</strong>. Através de metodologias
-                pragmáticas como Lean Six Sigma e automação avançada, garantimos que cada decisão
-                seja guiada por métricas, cada gargalo seja mapeado e o lucro seja uma consequência
-                matemática.
+                O caso de referência que valida o método: empresa de engenharia de R$ 46M, 21 bases
+                documentais, 25.117 lançamentos analisados. Resultado: R$ 1,5M em erro de regime
+                evitado, R$ 249k em créditos rastreados, contingência municipal de R$ 800k
+                identificada que nenhuma revisão anterior havia mapeado.
+              </p>
+              <p>
+                Cada conclusão entregue tem um dado primário com hash, uma lei vigente verificada na
+                competência analisada e um número auditável e reproduzível. Esse é o padrão.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 justify-center lg:justify-start pt-6">
-              {BADGES.map((badge) => (
-                <Badge
-                  key={badge}
-                  variant="secondary"
-                  className="bg-white/5 hover:bg-secondary/20 hover:text-secondary text-foreground/80 font-medium px-4 py-2 text-sm rounded-full border border-white/10 transition-colors"
-                >
-                  {badge}
-                </Badge>
-              ))}
-            </div>
+            <a
+              href="#contato"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors group"
+            >
+              Conversar sobre seu caso
+              <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+            </a>
           </div>
         </div>
       </div>
