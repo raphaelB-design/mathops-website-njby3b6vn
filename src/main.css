@@ -1,5 +1,4 @@
-/* Global styles - Theme, font, utilities, animations and global components */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,54 +6,51 @@
 
 @layer base {
   :root {
-    /* Forced Dark Theme matching spec */
-    --background: 240 20% 5%; /* #0a0a0f approximate */
-    --foreground: 210 40% 98%;
+    --bg-primary: #050508;
+    --bg-surface: rgba(255, 255, 255, 0.02);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --text-primary: #f5f5f7;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-tertiary: rgba(255, 255, 255, 0.4);
+    --accent-gradient-start: #4a6cf7;
+    --accent-gradient-end: #7b2ff7;
+    --accent-gold: #d4af37;
+    --accent-gold-light: rgba(212, 175, 55, 0.15);
+    --hover-bg: rgba(255, 255, 255, 0.05);
+    --active-bg: rgba(255, 255, 255, 0.08);
+    --success: #10b981;
+    --error: #ef4444;
 
-    --card: 240 21% 8%; /* #0d0d14 approximate */
-    --card-foreground: 210 40% 98%;
-
-    --popover: 240 21% 8%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 262 83% 58%; /* #7c3aed (Violet) */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 217 91% 60%; /* #3b82f6 (Blue) */
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 215.4 16.3% 65%; /* #94a3b8 approximate */
-
-    --accent: 262 83% 58%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 262 83% 58%;
-
-    --radius: 1.25rem; /* 20px border radius as per spec */
-
-    --sidebar-background: 240 21% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 262 83% 58%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 21% 12%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 27.9% 16.9%;
-    --sidebar-ring: 262 83% 58%;
+    /* Fallbacks for shadcn ui components if they use standard variables */
+    --background: 240 23% 3%;
+    --foreground: 240 10% 96%;
+    --card: 240 23% 5%;
+    --card-foreground: 240 10% 96%;
+    --popover: 240 23% 3%;
+    --popover-foreground: 240 10% 96%;
+    --primary: 228 90% 63%; /* #4a6cf7 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 44 65% 53%; /* #d4af37 */
+    --secondary-foreground: 0 0% 0%;
+    --muted: 240 20% 10%;
+    --muted-foreground: 240 10% 70%;
+    --accent: 254 91% 58%; /* #7b2ff7 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 10% 15%;
+    --input: 240 10% 15%;
+    --ring: 228 90% 63%;
+    --radius: 1rem;
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: 'Inter', sans-serif;
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary-foreground;
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased selection:bg-[#4a6cf7]/30 selection:text-white font-sans;
   }
 
   /* NEVER REMOVE THIS */
@@ -66,26 +62,15 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)];
   }
 
   .bg-gradient-primary {
-    @apply bg-gradient-to-r from-primary to-secondary;
+    @apply bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)];
   }
 
   /* Ensure animations exist for the reveal hook */
   .animate-fade-in-up {
     animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  @keyframes fade-in-up {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 }
