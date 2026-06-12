@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,42 +6,45 @@
 
 @layer base {
   :root {
-    --bg-primary: #050508;
-    --bg-surface: rgba(255, 255, 255, 0.02);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.06);
-    --text-primary: #f5f5f7;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-tertiary: rgba(255, 255, 255, 0.4);
-    --accent-gradient-start: #4a6cf7;
-    --accent-gradient-end: #7b2ff7;
-    --accent-gold: #d4af37;
-    --accent-gold-light: rgba(212, 175, 55, 0.15);
+    --bg-primary: #020604;
+    --bg-surface: rgba(16, 185, 129, 0.02);
+    --glass-bg: rgba(16, 185, 129, 0.03);
+    --glass-border: rgba(16, 185, 129, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: rgba(248, 250, 252, 0.7);
+    --text-tertiary: rgba(248, 250, 252, 0.4);
+
+    --accent-emerald: #10b981;
+    --accent-gold: #fbbf24;
+
+    --accent-gradient-start: #fbbf24;
+    --accent-gradient-end: #10b981;
+
     --hover-bg: rgba(255, 255, 255, 0.05);
     --active-bg: rgba(255, 255, 255, 0.08);
     --success: #10b981;
     --error: #ef4444;
 
-    /* Fallbacks for shadcn ui components if they use standard variables */
-    --background: 240 23% 3%;
-    --foreground: 240 10% 96%;
-    --card: 240 23% 5%;
-    --card-foreground: 240 10% 96%;
-    --popover: 240 23% 3%;
-    --popover-foreground: 240 10% 96%;
-    --primary: 228 90% 63%; /* #4a6cf7 */
+    /* Shadcn Fallbacks */
+    --background: 160 50% 2%;
+    --foreground: 210 40% 98%;
+    --card: 160 50% 3%;
+    --card-foreground: 210 40% 98%;
+    --popover: 160 50% 3%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 151 90% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 44 65% 53%; /* #d4af37 */
+    --secondary: 43 96% 56%;
     --secondary-foreground: 0 0% 0%;
-    --muted: 240 20% 10%;
-    --muted-foreground: 240 10% 70%;
-    --accent: 254 91% 58%; /* #7b2ff7 */
-    --accent-foreground: 0 0% 100%;
+    --muted: 160 20% 10%;
+    --muted-foreground: 160 10% 70%;
+    --accent: 43 96% 56%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 10% 15%;
-    --input: 240 10% 15%;
-    --ring: 228 90% 63%;
+    --border: 160 10% 15%;
+    --input: 160 10% 15%;
+    --ring: 151 90% 40%;
     --radius: 1rem;
   }
 
@@ -50,10 +53,9 @@
   }
 
   body {
-    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased selection:bg-[#4a6cf7]/30 selection:text-white font-sans;
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased selection:bg-[#10b981]/30 selection:text-white font-sans;
   }
 
-  /* NEVER REMOVE THIS */
   section[aria-label='Notifications alt+T'] {
     padding: 0 !important;
     margin: 0 !important;
@@ -69,7 +71,6 @@
     @apply bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)];
   }
 
-  /* Ensure animations exist for the reveal hook */
   .animate-fade-in-up {
     animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }

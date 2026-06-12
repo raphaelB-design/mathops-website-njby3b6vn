@@ -26,9 +26,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Inter Tight"', 'system-ui', 'sans-serif'],
-        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
-        display: ['"Instrument Serif"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Syne', 'Georgia', 'serif'],
+        display: ['Syne', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: 'var(--glass-border)',
@@ -37,12 +37,12 @@ export default {
         background: 'var(--bg-primary)',
         foreground: 'var(--text-primary)',
         primary: {
-          DEFAULT: 'var(--accent-gradient-start)',
-          foreground: '#ffffff',
+          DEFAULT: 'var(--primary)',
+          foreground: 'var(--primary-foreground)',
         },
         secondary: {
-          DEFAULT: 'var(--accent-gold)',
-          foreground: '#000000',
+          DEFAULT: 'var(--secondary)',
+          foreground: 'var(--secondary-foreground)',
         },
         destructive: {
           DEFAULT: 'var(--error)',
@@ -53,8 +53,8 @@ export default {
           foreground: 'var(--text-secondary)',
         },
         accent: {
-          DEFAULT: 'var(--accent-gradient-end)',
-          foreground: '#ffffff',
+          DEFAULT: 'var(--accent-gradient-start)',
+          foreground: 'var(--primary-foreground)',
         },
         popover: {
           DEFAULT: 'var(--bg-primary)',

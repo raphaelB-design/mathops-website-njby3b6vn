@@ -1,20 +1,18 @@
 import { HeroSection } from '@/components/sections/Hero'
-import { MetricsBento } from '@/components/sections/MetricsBento'
 import { ServicesSection } from '@/components/sections/Services'
+import { TAIEProductSection } from '@/components/sections/TAIEProduct'
+import { ResultsSection } from '@/components/sections/Results'
 import { AboutSection } from '@/components/sections/About'
-import { DiagnosticCTA } from '@/components/sections/DiagnosticCTA'
-import { CommercialCTA } from '@/components/sections/CommercialCTA'
 import { ContactSection } from '@/components/sections/Contact'
 
 const Index = () => {
   return (
     <div className="w-full">
       <HeroSection />
-      <MetricsBento />
       <ServicesSection />
+      <TAIEProductSection />
+      <ResultsSection />
       <AboutSection />
-      <DiagnosticCTA />
-      <CommercialCTA />
       <ContactSection />
     </div>
   )
