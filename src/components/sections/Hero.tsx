@@ -1,89 +1,126 @@
-import { ArrowRight, TrendingUp, Target, HandCoins, Activity } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { ParticleBackground } from '@/components/ParticleBackground'
+import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react'
 import { useScrollReveal } from '@/hooks/use-scroll-reveal'
 import { cn } from '@/lib/utils'
 
-const STATS = [
-  { value: '+45%', label: 'Aumento de Eficiência', icon: Activity },
-  { value: '3.2x', label: 'ROI Médio em 1 Ano', icon: Target },
-  { value: 'R$15M+', label: 'Economia Gerada', icon: HandCoins },
-  { value: '100%', label: 'Decisões Data-Driven', icon: TrendingUp },
+const METRICS = [
+  {
+    value: 'R$1,5M',
+    label: 'Economia evitada por erro de regime tributário em um único caso',
+    accent: 'primary',
+  },
+  {
+    value: '70+',
+    label: 'Cruzamentos matemáticos automatizados sobre os dados da empresa',
+    accent: 'secondary',
+  },
+  {
+    value: '15 dias',
+    label: 'Da ingestão de dados ao relatório executivo validado juridicamente',
+    accent: 'gold',
+  },
+]
+
+const PILLARS = [
+  { icon: TrendingUp, label: 'Inteligência Tributária' },
+  { icon: Shield, label: 'Conformidade Proativa' },
+  { icon: Zap, label: 'Decisão em Tempo Real' },
 ]
 
 export function HeroSection() {
   const { ref, isRevealed } = useScrollReveal()
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center pt-20 pb-10 overflow-hidden">
-      <ParticleBackground />
+    <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-20 overflow-hidden grid-pattern noise-texture">
+      {/* Ambient glows */}
+      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-secondary/8 rounded-full blur-[120px] pointer-events-none" />
 
       <div
         ref={ref}
         className={cn(
-          'container relative z-10 mx-auto px-4 md:px-6 flex flex-col items-center text-center opacity-0',
+          'max-w-7xl mx-auto px-6 relative z-10 opacity-0',
           isRevealed && 'animate-fade-in-up',
         )}
       >
-        <div className="inline-flex items-center rounded-full border border-secondary/30 bg-secondary/10 px-3 py-1 text-sm font-medium text-secondary mb-8 backdrop-blur-sm">
-          <span className="flex h-2 w-2 rounded-full bg-secondary mr-2 animate-pulse"></span>
-          Inteligência Operacional Avançada
+        {/* Eyebrow */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/8 text-xs font-semibold text-primary uppercase tracking-widest">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Inteligência Tributária & Gestão
+          </div>
         </div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-extrabold tracking-tight max-w-5xl mb-6 text-foreground leading-[1.1]">
-          Escale seus resultados com <br className="hidden md:block" />
-          <span className="text-gradient">Precisão Matemática</span>
-        </h1>
+        {/* Headline */}
+        <div className="max-w-4xl mb-8">
+          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-foreground">
+            Dados que revelam
+            <br />
+            <span className="text-gradient">créditos invisíveis</span>
+            <br />
+            e riscos ocultos.
+          </h1>
+        </div>
 
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed font-sans">
-          A MathOps une Lean Six Sigma, Inteligência Artificial e Data Science para eliminar
-          desperdícios e transformar dados em lucro direto na última linha do seu balanço.
+        {/* Subheadline */}
+        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed font-medium">
+          Cruzamos matematicamente todas as obrigações fiscais da sua empresa — SPED, DCTFWeb,
+          EFD-Reinf, NF-e, folha e financeiro — com 70+ verificações que a contabilidade
+          convencional não executa.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-20">
-          <Button
-            size="lg"
-            className="bg-gradient-primary text-black font-semibold rounded-full px-8 text-md shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105 transition-all duration-300 h-14"
-            asChild
+        {/* CTAs */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-20">
+          <a
+            href="#taie"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-primary text-white font-semibold text-sm glow-primary hover:opacity-90 transition-all duration-200 group"
           >
-            <a href="#contato">
-              Iniciar Avaliação de Maturidade
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="rounded-full px-8 text-md border-white/10 bg-white/5 hover:bg-white/10 hover:text-foreground backdrop-blur-sm transition-all duration-300 h-14 font-medium"
-            asChild
+            Ver como funciona
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+          </a>
+          <a
+            href="#contato"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border border-white/10 bg-white/[0.03] text-foreground font-semibold text-sm hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
           >
-            <a href="#taie">Conhecer a Metodologia TAIE</a>
-          </Button>
+            Agendar diagnóstico gratuito
+          </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl">
-          {STATS.map((stat, idx) => (
-            <Card
-              key={idx}
-              className="bg-card/40 backdrop-blur-md border-white/5 hover:-translate-y-1 transition-transform duration-300 hover:border-secondary/50"
+        {/* Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/[0.04] rounded-2xl overflow-hidden border border-white/[0.06]">
+          {METRICS.map((m, i) => (
+            <div
+              key={i}
+              className="bg-card/60 backdrop-blur-sm p-8 hover:bg-card/80 transition-colors group"
             >
-              <CardContent className="p-6 flex flex-col items-center justify-center text-center">
-                <stat.icon className="h-6 w-6 text-secondary mb-3 opacity-90" />
-                <h3 className="text-3xl font-display font-bold text-foreground mb-1">
-                  {stat.value}
-                </h3>
-                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
-                  {stat.label}
-                </p>
-              </CardContent>
-            </Card>
+              <p
+                className={cn(
+                  'font-display text-4xl font-bold mb-2',
+                  m.accent === 'primary' && 'text-gradient',
+                  m.accent === 'secondary' &&
+                    'bg-clip-text text-transparent bg-gradient-to-r from-secondary to-primary',
+                  m.accent === 'gold' && 'text-gradient-gold',
+                )}
+              >
+                {m.value}
+              </p>
+              <p className="text-sm text-muted-foreground leading-snug">{m.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pillars */}
+        <div className="flex flex-wrap gap-3 mt-8">
+          {PILLARS.map((p, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground"
+            >
+              <p.icon className="h-3.5 w-3.5 text-primary" />
+              {p.label}
+            </div>
           ))}
         </div>
       </div>
-
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 pointer-events-none" />
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[100px] -z-10 pointer-events-none" />
     </section>
   )
 }
