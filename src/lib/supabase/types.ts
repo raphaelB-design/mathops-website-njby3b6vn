@@ -180,6 +180,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_log: {
+        Row: {
+          chave: string
+          created_at: string
+          id: string
+          operacao: string
+        }
+        Insert: {
+          chave: string
+          created_at?: string
+          id?: string
+          operacao: string
+        }
+        Update: {
+          chave?: string
+          created_at?: string
+          id?: string
+          operacao?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       vw_cta_performance: {
@@ -246,7 +267,12 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      checar_rate_limit: {
+        Args: { p_email?: string; p_ip?: string; p_operacao: string }
+        Returns: undefined
+      }
+      hash_valor: { Args: { valor: string }; Returns: string }
+      limpar_rate_limit_log: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
@@ -432,6 +458,11 @@ export const Constants = {
 //   referrer: text (nullable)
 //   user_agent: text (nullable)
 //   sessao_hash: text (nullable)
+// Table: rate_limit_log
+//   id: uuid (not null, default: gen_random_uuid())
+//   chave: text (not null)
+//   operacao: text (not null)
+//   created_at: timestamp with time zone (not null, default: now())
 // Table: vw_cta_performance
 //   cta_id: text (nullable)
 //   total_clicks: bigint (nullable)
@@ -468,32 +499,89 @@ export const Constants = {
 //   CHECK leads_status_check: CHECK ((status = ANY (ARRAY['novo'::text, 'contatado'::text, 'em_proposta'::text, 'ganho'::text, 'perdido'::text, 'descartado'::text])))
 // Table: page_views
 //   PRIMARY KEY page_views_pkey: PRIMARY KEY (id)
+// Table: rate_limit_log
+//   PRIMARY KEY rate_limit_log_pkey: PRIMARY KEY (id)
 
 // --- ROW LEVEL SECURITY POLICIES ---
 // Table: cta_clicks
-//   Policy "anon_insert_cta_clicks" (INSERT, PERMISSIVE) roles={anon}
-//     WITH CHECK: true
+//   Policy "anon_insert_cta_clicks_seguro" (INSERT, PERMISSIVE) roles={anon}
+//     WITH CHECK: ((cta_id IS NOT NULL) AND (cta_id = ANY (ARRAY['hero_diagnostico'::text, 'hero_cases'::text, 'contact_cta'::text, 'services_cta'::text, 'about_cta'::text, 'footer_cta'::text, 'sticky_cta'::text, 'diagnostico_form_open'::text])) AND ((sessao_hash IS NULL) OR (length(sessao_hash) = 64)))
+//   Policy "deny_anon_select_cta_clicks" (SELECT, PERMISSIVE) roles={anon}
+//     USING: false
 //   Policy "service_all_cta_clicks" (ALL, PERMISSIVE) roles={service_role}
 //     USING: true
 //     WITH CHECK: true
 // Table: lead_events
+//   Policy "deny_anon_all_lead_events" (ALL, PERMISSIVE) roles={anon}
+//     USING: false
 //   Policy "service_all_lead_events" (ALL, PERMISSIVE) roles={service_role}
 //     USING: true
 //     WITH CHECK: true
 // Table: leads
-//   Policy "anon_insert_leads" (INSERT, PERMISSIVE) roles={anon}
-//     WITH CHECK: true
+//   Policy "anon_insert_leads_seguro" (INSERT, PERMISSIVE) roles={anon}
+//     WITH CHECK: ((nome IS NOT NULL) AND (length(TRIM(BOTH FROM nome)) >= 2) AND (email IS NOT NULL) AND (email ~* '^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}'::text) AND (consentimento_lgpd = true) AND ((status IS NULL) OR (status = 'novo'::text)) AND ((origem IS NULL) OR (origem = 'site'::text)) AND (score IS NULL) AND (valor_estimado IS NULL) AND (responsavel IS NULL) AND (anotacoes IS NULL) AND (data_contato IS NULL) AND (data_proposta IS NULL) AND (data_fechamento IS NULL) AND ((nome IS NULL) OR (length(nome) <= 200)) AND ((empresa IS NULL) OR (length(empresa) <= 200)) AND ((mensagem IS NULL) OR (length(mensagem) <= 5000)) AND ((telefone IS NULL) OR (length(telefone) <= 30)))
+//   Policy "deny_anon_delete_leads" (DELETE, PERMISSIVE) roles={anon}
+//     USING: false
+//   Policy "deny_anon_select_leads" (SELECT, PERMISSIVE) roles={anon}
+//     USING: false
+//   Policy "deny_anon_update_leads" (UPDATE, PERMISSIVE) roles={anon}
+//     USING: false
 //   Policy "service_all_leads" (ALL, PERMISSIVE) roles={service_role}
 //     USING: true
 //     WITH CHECK: true
 // Table: page_views
-//   Policy "anon_insert_page_views" (INSERT, PERMISSIVE) roles={anon}
-//     WITH CHECK: true
+//   Policy "anon_insert_page_views_seguro" (INSERT, PERMISSIVE) roles={anon}
+//     WITH CHECK: (((pagina IS NULL) OR ((pagina ~~ '/%'::text) AND (length(pagina) <= 500))) AND ((referrer IS NULL) OR (length(referrer) <= 500)) AND ((sessao_hash IS NULL) OR (length(sessao_hash) = 64)) AND ((user_agent IS NULL) OR (length(user_agent) <= 1000)))
+//   Policy "deny_anon_select_page_views" (SELECT, PERMISSIVE) roles={anon}
+//     USING: false
 //   Policy "service_all_page_views" (ALL, PERMISSIVE) roles={service_role}
+//     USING: true
+//     WITH CHECK: true
+// Table: rate_limit_log
+//   Policy "service_all_rate_limit_log" (ALL, PERMISSIVE) roles={service_role}
 //     USING: true
 //     WITH CHECK: true
 
 // --- DATABASE FUNCTIONS ---
+// FUNCTION anonimizar_page_view()
+//   CREATE OR REPLACE FUNCTION public.anonimizar_page_view()
+//    RETURNS trigger
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//    SET search_path TO 'public'
+//   AS $function$
+//   DECLARE
+//     v_ua     text := NEW.user_agent;
+//     v_browser text := 'Desconhecido';
+//     v_os      text := 'Desconhecido';
+//   BEGIN
+//     -- Detecta browser (ordem importa — Edge antes de Chrome)
+//     IF v_ua ILIKE '%Edg/%'          THEN v_browser := 'Edge';
+//     ELSIF v_ua ILIKE '%Chrome/%'    THEN v_browser := 'Chrome';
+//     ELSIF v_ua ILIKE '%Firefox/%'   THEN v_browser := 'Firefox';
+//     ELSIF v_ua ILIKE '%Safari/%'    THEN v_browser := 'Safari';
+//     ELSIF v_ua ILIKE '%OPR/%'       THEN v_browser := 'Opera';
+//     ELSIF v_ua ILIKE '%bot%'
+//        OR v_ua ILIKE '%crawler%'
+//        OR v_ua ILIKE '%spider%'     THEN v_browser := 'Bot';
+//     END IF;
+//
+//     -- Detecta SO
+//     IF v_ua ILIKE '%Windows NT%'    THEN v_os := 'Windows';
+//     ELSIF v_ua ILIKE '%Macintosh%'  THEN v_os := 'macOS';
+//     ELSIF v_ua ILIKE '%Android%'    THEN v_os := 'Android';
+//     ELSIF v_ua ILIKE '%iPhone%'
+//        OR v_ua ILIKE '%iPad%'       THEN v_os := 'iOS';
+//     ELSIF v_ua ILIKE '%Linux%'      THEN v_os := 'Linux';
+//     END IF;
+//
+//     -- Substitui user_agent completo pela versão anonimizada
+//     NEW.user_agent := v_browser || ' / ' || v_os;
+//
+//     RETURN NEW;
+//   END;
+//   $function$
+//
 // FUNCTION calcular_score_lead()
 //   CREATE OR REPLACE FUNCTION public.calcular_score_lead()
 //    RETURNS trigger
@@ -527,33 +615,156 @@ export const Constants = {
 //   end;
 //   $function$
 //
+// FUNCTION checar_rate_limit(text, text, text)
+//   CREATE OR REPLACE FUNCTION public.checar_rate_limit(p_operacao text, p_email text DEFAULT NULL::text, p_ip text DEFAULT NULL::text)
+//    RETURNS void
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//    SET search_path TO 'public'
+//   AS $function$
+//   DECLARE
+//     v_limite_email int;
+//     v_limite_ip    int;
+//     v_janela       interval;
+//     v_count_email  int := 0;
+//     v_count_ip     int := 0;
+//     v_email_hash   text;
+//     v_ip_hash      text;
+//   BEGIN
+//     -- Configura limites por operação
+//     CASE p_operacao
+//       WHEN 'lead_insert' THEN
+//         v_limite_email := 3;
+//         v_limite_ip    := 10;
+//         v_janela       := interval '1 hour';
+//       WHEN 'cta_click' THEN
+//         v_limite_email := NULL;  -- sem limite por email para cliques
+//         v_limite_ip    := 50;
+//         v_janela       := interval '1 hour';
+//       WHEN 'page_view' THEN
+//         v_limite_email := NULL;
+//         v_limite_ip    := 200;
+//         v_janela       := interval '1 hour';
+//       ELSE
+//         v_limite_email := 5;
+//         v_limite_ip    := 20;
+//         v_janela       := interval '1 hour';
+//     END CASE;
+//
+//     -- Checa rate limit por email (se aplicável)
+//     IF p_email IS NOT NULL AND v_limite_email IS NOT NULL THEN
+//       v_email_hash := public.hash_valor(p_email);
+//
+//       SELECT count(*) INTO v_count_email
+//       FROM public.rate_limit_log
+//       WHERE chave     = 'email:' || v_email_hash
+//         AND operacao  = p_operacao
+//         AND created_at > now() - v_janela;
+//
+//       IF v_count_email >= v_limite_email THEN
+//         RAISE EXCEPTION 'rate_limit: limite de envios por email atingido. Aguarde antes de tentar novamente.';
+//       END IF;
+//
+//       -- Registra o evento por email
+//       INSERT INTO public.rate_limit_log (chave, operacao)
+//       VALUES ('email:' || v_email_hash, p_operacao);
+//     END IF;
+//
+//     -- Checa rate limit por IP (se fornecido)
+//     IF p_ip IS NOT NULL AND v_limite_ip IS NOT NULL THEN
+//       v_ip_hash := public.hash_valor(p_ip);
+//
+//       SELECT count(*) INTO v_count_ip
+//       FROM public.rate_limit_log
+//       WHERE chave     = 'ip:' || v_ip_hash
+//         AND operacao  = p_operacao
+//         AND created_at > now() - v_janela;
+//
+//       IF v_count_ip >= v_limite_ip THEN
+//         RAISE EXCEPTION 'rate_limit: muitas requisições do mesmo IP. Aguarde antes de tentar novamente.';
+//       END IF;
+//
+//       -- Registra o evento por IP
+//       INSERT INTO public.rate_limit_log (chave, operacao)
+//       VALUES ('ip:' || v_ip_hash, p_operacao);
+//     END IF;
+//   END;
+//   $function$
+//
+// FUNCTION checar_rate_limit_cta()
+//   CREATE OR REPLACE FUNCTION public.checar_rate_limit_cta()
+//    RETURNS trigger
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//    SET search_path TO 'public'
+//   AS $function$
+//   BEGIN
+//     IF NEW.sessao_hash IS NOT NULL THEN
+//       PERFORM public.checar_rate_limit(
+//         'cta_click',
+//         NULL,
+//         NEW.sessao_hash
+//       );
+//     END IF;
+//     RETURN NEW;
+//   END;
+//   $function$
+//
 // FUNCTION checar_rate_limit_lead()
 //   CREATE OR REPLACE FUNCTION public.checar_rate_limit_lead()
 //    RETURNS trigger
 //    LANGUAGE plpgsql
+//    SECURITY DEFINER
 //    SET search_path TO 'public'
 //   AS $function$
-//   declare
-//     total_recente int;
-//   begin
-//     select count(*) into total_recente
-//     from public.leads
-//     where email = new.email
-//       and created_at > now() - interval '1 hour';
+//   BEGIN
+//     -- Rate limit por email (3/h) — bloqueia submissões repetidas do mesmo email
+//     PERFORM public.checar_rate_limit(
+//       'lead_insert',
+//       NEW.email,
+//       NEW.ip_hash  -- ip_hash já deve vir como hash do frontend (não o IP real)
+//     );
 //
-//     if total_recente >= 5 then
-//       raise exception 'rate_limit: muitos envios do mesmo email em curto período';
-//     end if;
+//     RETURN NEW;
+//   END;
+//   $function$
 //
-//     return new;
-//   end;
+// FUNCTION hash_valor(text)
+//   CREATE OR REPLACE FUNCTION public.hash_valor(valor text)
+//    RETURNS text
+//    LANGUAGE sql
+//    IMMUTABLE SECURITY DEFINER
+//    SET search_path TO 'public', 'extensions'
+//   AS $function$
+//     -- Troque 'mathops-salt-2024' por um valor aleatório e guarde no vault
+//     SELECT encode(
+//       extensions.digest('mathops-salt-2024' || lower(trim(valor)), 'sha256'),
+//       'hex'
+//     );
+//   $function$
+//
+// FUNCTION limpar_rate_limit_log()
+//   CREATE OR REPLACE FUNCTION public.limpar_rate_limit_log()
+//    RETURNS void
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//    SET search_path TO 'public'
+//   AS $function$
+//   BEGIN
+//     DELETE FROM public.rate_limit_log
+//     WHERE created_at < now() - interval '24 hours';
+//   END;
 //   $function$
 //
 
 // --- TRIGGERS ---
+// Table: cta_clicks
+//   trg_rate_limit_cta: CREATE TRIGGER trg_rate_limit_cta BEFORE INSERT ON public.cta_clicks FOR EACH ROW EXECUTE FUNCTION checar_rate_limit_cta()
 // Table: leads
 //   trg_rate_limit_lead: CREATE TRIGGER trg_rate_limit_lead BEFORE INSERT ON public.leads FOR EACH ROW EXECUTE FUNCTION checar_rate_limit_lead()
 //   trg_score_lead: CREATE TRIGGER trg_score_lead BEFORE INSERT OR UPDATE ON public.leads FOR EACH ROW EXECUTE FUNCTION calcular_score_lead()
+// Table: page_views
+//   trg_anonimizar_page_view: CREATE TRIGGER trg_anonimizar_page_view BEFORE INSERT ON public.page_views FOR EACH ROW EXECUTE FUNCTION anonimizar_page_view()
 
 // --- INDEXES ---
 // Table: cta_clicks
@@ -569,3 +780,6 @@ export const Constants = {
 // Table: page_views
 //   CREATE INDEX page_views_created_at_idx ON public.page_views USING btree (created_at DESC)
 //   CREATE INDEX page_views_pagina_idx ON public.page_views USING btree (pagina)
+// Table: rate_limit_log
+//   CREATE INDEX rate_limit_log_chave_op_idx ON public.rate_limit_log USING btree (chave, operacao, created_at DESC)
+//   CREATE INDEX rate_limit_log_cleanup_idx ON public.rate_limit_log USING btree (created_at DESC)

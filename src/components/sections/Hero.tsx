@@ -80,13 +80,13 @@ export function HeroSection() {
         /* ── Pill badge ──────────────────────────────────────── */
         .mo-pill {
           display: inline-flex; align-items: center; gap: 7px;
-          padding: 5px 14px;
+          padding: 6px 16px;
           border: 0.5px solid rgba(0,180,216,.3);
           background: rgba(0,180,216,.07);
           border-radius: 999px;
           font-family: 'IBM Plex Mono', monospace;
-          font-size: 11px; color: #00B4D8; letter-spacing: .05em;
-          margin-bottom: 24px;
+          font-size: 12px; color: #00B4D8; letter-spacing: .05em;
+          margin-bottom: 32px;
         }
         .mo-pdot {
           width: 6px; height: 6px; border-radius: 50%;
@@ -98,32 +98,32 @@ export function HeroSection() {
         /* ── Headline ────────────────────────────────────────── */
         .mo-h1 {
           font-family: 'Syne', sans-serif;
-          font-size: clamp(36px, 3.8vw, 54px);
+          font-size: clamp(40px, 4.5vw, 68px);
           font-weight: 800;
           color: #F0F4F8;
-          line-height: 1.06;
+          line-height: 1.1;
           letter-spacing: -0.03em;
-          margin-bottom: 18px;
+          margin-bottom: 24px;
         }
 
         /* ── Subtitle ────────────────────────────────────────── */
         .mo-sub {
           font-family: 'Inter', sans-serif;
-          font-size: 15.5px;
+          font-size: clamp(16px, 1.2vw, 18px);
           color: #8FA3B8;
-          line-height: 1.72;
-          margin-bottom: 28px;
-          max-width: 460px;
+          line-height: 1.75;
+          margin-bottom: 40px;
+          max-width: 520px;
         }
 
         /* ── CTAs ────────────────────────────────────────────── */
-        .mo-cta-row { display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap; }
+        .mo-cta-row { display: flex; gap: 12px; margin-bottom: 48px; flex-wrap: wrap; }
 
         .mo-cta-p {
           display: inline-flex; align-items: center; gap: 8px;
-          padding: 13px 26px;
+          padding: 15px 28px;
           background: #0A66C2; color: #fff;
-          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+          font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
           border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
           transition: background .2s, transform .15s;
           white-space: nowrap;
@@ -132,9 +132,9 @@ export function HeroSection() {
 
         .mo-cta-s {
           display: inline-flex; align-items: center; gap: 7px;
-          padding: 13px 20px;
+          padding: 15px 24px;
           background: transparent; color: #8FA3B8;
-          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+          font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500;
           border: 0.5px solid #1C2A3A; border-radius: 8px;
           cursor: pointer; text-decoration: none;
           transition: border-color .2s, color .2s;
@@ -147,9 +147,9 @@ export function HeroSection() {
           background: #080D14;
           border: 0.5px solid #1C2A3A;
           border-radius: 12px;
-          padding: 22px 26px;
+          padding: 26px 32px;
           position: relative; overflow: hidden;
-          margin-bottom: 22px;
+          margin-bottom: 32px;
         }
         .mo-manifesto::before {
           content: ''; position: absolute;
@@ -159,47 +159,47 @@ export function HeroSection() {
         }
         .mo-mtag {
           font-family: 'IBM Plex Mono', monospace;
-          font-size: 9.5px; color: #3D5470;
+          font-size: 10px; color: #3D5470;
           letter-spacing: .12em; text-transform: uppercase;
-          margin-bottom: 14px;
+          margin-bottom: 16px;
         }
         .mo-mrow {
           display: flex; align-items: baseline; gap: 10px;
-          padding-bottom: 11px; margin-bottom: 11px;
+          padding-bottom: 12px; margin-bottom: 12px;
           border-bottom: 0.5px solid #1C2A3A;
         }
         .mo-mrow:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
         .mo-mneg {
           font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px; color: #3D5470;
+          font-size: 11px; color: #3D5470;
           text-decoration: line-through; white-space: nowrap; flex-shrink: 0;
         }
         .mo-marr {
           font-family: 'IBM Plex Mono', monospace;
-          font-size: 10px; color: #3D5470; flex-shrink: 0;
+          font-size: 11px; color: #3D5470; flex-shrink: 0;
         }
         .mo-maff {
           font-family: 'Syne', sans-serif;
-          font-size: 15.5px; font-weight: 700; color: #F0F4F8;
+          font-size: 16.5px; font-weight: 700; color: #F0F4F8;
         }
 
         /* ── Metrics ─────────────────────────────────────────── */
         .mo-metrics {
-          display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+          display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
         }
-        .mo-mc { border-left: 2px solid #0A66C2; padding: 9px 0 9px 14px; }
+        .mo-mc { border-left: 2px solid #0A66C2; padding: 10px 0 10px 16px; }
         .mo-mv {
           font-family: 'Syne', sans-serif;
-          font-size: 24px; font-weight: 800; color: #F0F4F8;
-          line-height: 1; margin-bottom: 3px;
+          font-size: 28px; font-weight: 800; color: #F0F4F8;
+          line-height: 1; margin-bottom: 4px;
         }
         .mo-ml {
           font-family: 'Inter', sans-serif;
-          font-size: 11px; font-weight: 600; color: #F0F4F8; margin-bottom: 3px;
+          font-size: 12px; font-weight: 600; color: #F0F4F8; margin-bottom: 4px;
         }
         .mo-md {
           font-family: 'IBM Plex Mono', monospace;
-          font-size: 9px; color: #3D5470; line-height: 1.5;
+          font-size: 10px; color: #3D5470; line-height: 1.5;
         }
 
         /* ── Status chips ────────────────────────────────────── */
@@ -282,7 +282,8 @@ export function HeroSection() {
         /* ── Responsive ──────────────────────────────────────── */
         @media (max-width: 1023px) {
           .mo-right-col { display: none !important; }
-          .mo-hero-grid { grid-template-columns: 1fr !important; }
+          .mo-hero-grid { grid-template-columns: 1fr !important; padding: 0 24px !important; }
+          .mo-left-col { padding-right: 0 !important; padding-top: 40px !important; padding-bottom: 40px !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           .mo-scan { display: none; }
@@ -364,7 +365,10 @@ export function HeroSection() {
           }}
         >
           {/* ══ LEFT COLUMN ════════════════════════════════════════════ */}
-          <div style={{ paddingTop: 48, paddingBottom: 48, paddingRight: 48 }}>
+          <div
+            className="mo-left-col"
+            style={{ paddingTop: 64, paddingBottom: 64, paddingRight: 64 }}
+          >
             {/* Pill */}
             <div className="mo-pill mo-rv" style={{ '--d': '.15s' } as React.CSSProperties}>
               <span className="mo-pdot" />
