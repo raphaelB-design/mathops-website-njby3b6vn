@@ -368,7 +368,7 @@ export function HeroSection() {
             {/* Pill */}
             <div className="mo-pill mo-rv" style={{ '--d': '.15s' } as React.CSSProperties}>
               <span className="mo-pdot" />
-              inteligência decisória baseada em matemática
+              inteligência decisória baseada em Dados
             </div>
 
             {/* H1 */}
