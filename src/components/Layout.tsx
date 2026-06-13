@@ -287,7 +287,7 @@ export default function Layout() {
                   lineHeight: 1.6,
                 }}
               >
-                Inteligência decisória baseada em matemática.
+                Inteligência decisória baseada em Dados.
                 <br />
                 Clareza. Inteligência. Confiança.
               </p>
