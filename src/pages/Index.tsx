@@ -7,7 +7,15 @@ import { ContactSection } from '@/components/sections/Contact'
 
 export default function Index() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070B] overflow-x-hidden">
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        background: '#04060A',
+        overflowX: 'hidden',
+      }}
+    >
       <HeroSection />
       <MetricsBento />
       <ServicesSection />
