@@ -1,993 +1,1122 @@
-import { useEffect, useRef, useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Search, Settings, TrendingUp } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useEffect, useRef } from 'react'
 
-const VALUE_PROPS = [
+/* ─────────────────────────────────────────────────────────────────────────────
+   MathOps — Hero Section v3.1
+   Layout: grid 50/50, texto centralizado na coluna esquerda, SVG isométrico
+   maior e bem posicionado na coluna direita.
+───────────────────────────────────────────────────────────────────────────── */
+
+const MANIFESTO = [
+  { neg: 'Não vendemos relatórios.', aff: 'Entregamos clareza.' },
+  { neg: 'Não vendemos dashboards.', aff: 'Entregamos inteligência.' },
+  { neg: 'Não vendemos consultoria.', aff: 'Entregamos confiança.' },
+]
+
+const METRICS = [
+  { val: '38%', label: 'Redução decisória', ctx: '12 projetos BI industrial' },
+  { val: '4.8σ', label: 'Qualidade processo', ctx: 'baseline Lean Six Sigma' },
+  { val: 'R$0', label: 'Erros de cálculo', ctx: 'memórias auditáveis' },
+]
+
+const CHIPS = [
   {
-    icon: Search,
-    title: 'Data-Driven Insights',
-    description:
-      'Tailor B2B data consulting to optimize performance, predict trends, and drive smarter business decisions.',
+    color: '#22C55E',
+    shadow: 'rgba(34,197,94,.7)',
+    label: 'VALIDAÇÃO',
+    val: 'ATIVA',
+    valColor: '#22C55E',
   },
-  {
-    icon: Settings,
-    title: 'Optimized Operations',
-    description:
-      'Advanced mathematical modeling to streamline processes, reduce costs, and maximize operational efficiency.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Predictive Analytics',
-    description:
-      'Leverage machine learning to forecast market dynamics, quantify risks, and identify growth opportunities.',
-  },
+  { color: '#00B4D8', shadow: '', label: 'SIGMA', val: '4.82', valColor: '#00B4D8' },
+  { color: '#0A66C2', shadow: '', label: 'R²', val: '0.9871', valColor: '#8FA3B8' },
+  { color: '#F97316', shadow: '', label: 'CONFIANÇA', val: '99.6%', valColor: '#F0F4F8' },
 ]
 
 export function HeroSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const svgRef = useRef<SVGSVGElement>(null)
-
-  const [tooltip, setTooltip] = useState<{
-    show: boolean
-    x: number
-    y: number
-    title: string
-    content: string
-  }>({
-    show: false,
-    x: 0,
-    y: 0,
-    title: '',
-    content: '',
-  })
-
-  const handleTooltipEnter = (e: React.MouseEvent, title: string, content: string) => {
-    setTooltip({ show: true, x: e.clientX, y: e.clientY, title, content })
-  }
-  const handleTooltipMove = (e: React.MouseEvent) => {
-    setTooltip((prev) => ({ ...prev, x: e.clientX, y: e.clientY }))
-  }
-  const handleTooltipLeave = () => {
-    setTooltip((prev) => ({ ...prev, show: false }))
-  }
+  const scanRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    let reqId: number
-    let targetX = 0
-    let targetY = 0
-    let currentX = 0
-    let currentY = 0
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return
-      const rect = containerRef.current.getBoundingClientRect()
-      targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 2
-      targetY = ((e.clientY - rect.top) / rect.height - 0.5) * 2
+    const el = scanRef.current
+    if (!el) return
+    el.style.opacity = '1'
+    const start = performance.now()
+    const dur = 1500
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / dur, 1)
+      const ease = 1 - Math.pow(1 - p, 3)
+      el.style.top = `${ease * 100}%`
+      if (p < 1) requestAnimationFrame(tick)
+      else el.style.opacity = '0'
     }
-
-    const animate = () => {
-      currentX += (targetX - currentX) * 0.05
-      currentY += (targetY - currentY) * 0.05
-      const scrollY = window.scrollY
-
-      if (svgRef.current) {
-        const layers = svgRef.current.querySelectorAll('.parallax-layer')
-        layers.forEach((layer) => {
-          const depth = parseFloat(layer.getAttribute('data-depth') || '0')
-          const scrollDepth = parseFloat(layer.getAttribute('data-scroll-depth') || '0')
-          const moveX = currentX * depth * 30
-          const moveY = currentY * depth * 30 - scrollY * scrollDepth
-          ;(layer as SVGElement).style.transform = `translate(${moveX}px, ${moveY}px)`
-        })
-      }
-      reqId = requestAnimationFrame(animate)
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    reqId = requestAnimationFrame(animate)
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
-      cancelAnimationFrame(reqId)
-    }
+    requestAnimationFrame(tick)
   }, [])
 
   return (
-    <section ref={containerRef} className="bg-[#05070B] pt-20 pb-24 relative overflow-hidden">
-      {/* Custom Tooltip */}
-      <div
-        className={cn(
-          'fixed z-50 pointer-events-none transition-opacity duration-200 w-72 p-5 rounded-xl bg-[#0c0c0f]/95 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,245,255,0.15)]',
-          tooltip.show ? 'opacity-100' : 'opacity-0',
-        )}
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+        /* ── Design tokens ───────────────────────────────────── */
+        :root {
+          --mo-void:    #04060A;
+          --mo-deep:    #080D14;
+          --mo-surface: #0E1620;
+          --mo-border:  #1C2A3A;
+          --mo-blue:    #0A66C2;
+          --mo-cyan:    #00B4D8;
+          --mo-slate:   #8FA3B8;
+          --mo-ghost:   #3D5470;
+          --mo-white:   #F0F4F8;
+        }
+
+        /* ── Scanner ─────────────────────────────────────────── */
+        .mo-scan {
+          position: absolute; left: 0; right: 0; height: 1px;
+          background: linear-gradient(90deg, transparent, #00B4D8 35%, #00B4D8 65%, transparent);
+          box-shadow: 0 0 16px 2px rgba(0,180,216,.5);
+          pointer-events: none; z-index: 30; opacity: 0;
+          top: 0; transition: opacity .2s;
+        }
+
+        /* ── Pill badge ──────────────────────────────────────── */
+        .mo-pill {
+          display: inline-flex; align-items: center; gap: 7px;
+          padding: 5px 14px;
+          border: 0.5px solid rgba(0,180,216,.3);
+          background: rgba(0,180,216,.07);
+          border-radius: 999px;
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 11px; color: #00B4D8; letter-spacing: .05em;
+          margin-bottom: 24px;
+        }
+        .mo-pdot {
+          width: 6px; height: 6px; border-radius: 50%;
+          background: #00B4D8;
+          animation: mo-pulse 2s ease-in-out infinite;
+        }
+        @keyframes mo-pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+        /* ── Headline ────────────────────────────────────────── */
+        .mo-h1 {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(36px, 3.8vw, 54px);
+          font-weight: 800;
+          color: #F0F4F8;
+          line-height: 1.06;
+          letter-spacing: -0.03em;
+          margin-bottom: 18px;
+        }
+
+        /* ── Subtitle ────────────────────────────────────────── */
+        .mo-sub {
+          font-family: 'Inter', sans-serif;
+          font-size: 15.5px;
+          color: #8FA3B8;
+          line-height: 1.72;
+          margin-bottom: 28px;
+          max-width: 460px;
+        }
+
+        /* ── CTAs ────────────────────────────────────────────── */
+        .mo-cta-row { display: flex; gap: 10px; margin-bottom: 32px; flex-wrap: wrap; }
+
+        .mo-cta-p {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 13px 26px;
+          background: #0A66C2; color: #fff;
+          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+          border: none; border-radius: 8px; cursor: pointer; text-decoration: none;
+          transition: background .2s, transform .15s;
+          white-space: nowrap;
+        }
+        .mo-cta-p:hover { background: #0d7ae0; transform: translateY(-1px); }
+
+        .mo-cta-s {
+          display: inline-flex; align-items: center; gap: 7px;
+          padding: 13px 20px;
+          background: transparent; color: #8FA3B8;
+          font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+          border: 0.5px solid #1C2A3A; border-radius: 8px;
+          cursor: pointer; text-decoration: none;
+          transition: border-color .2s, color .2s;
+          white-space: nowrap;
+        }
+        .mo-cta-s:hover { border-color: #8FA3B8; color: #F0F4F8; }
+
+        /* ── Manifesto card ──────────────────────────────────── */
+        .mo-manifesto {
+          background: #080D14;
+          border: 0.5px solid #1C2A3A;
+          border-radius: 12px;
+          padding: 22px 26px;
+          position: relative; overflow: hidden;
+          margin-bottom: 22px;
+        }
+        .mo-manifesto::before {
+          content: ''; position: absolute;
+          left: 0; top: 0; bottom: 0; width: 3px;
+          background: linear-gradient(180deg, #0A66C2, #00B4D8);
+          border-radius: 0 0 0 12px;
+        }
+        .mo-mtag {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9.5px; color: #3D5470;
+          letter-spacing: .12em; text-transform: uppercase;
+          margin-bottom: 14px;
+        }
+        .mo-mrow {
+          display: flex; align-items: baseline; gap: 10px;
+          padding-bottom: 11px; margin-bottom: 11px;
+          border-bottom: 0.5px solid #1C2A3A;
+        }
+        .mo-mrow:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+        .mo-mneg {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: #3D5470;
+          text-decoration: line-through; white-space: nowrap; flex-shrink: 0;
+        }
+        .mo-marr {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: #3D5470; flex-shrink: 0;
+        }
+        .mo-maff {
+          font-family: 'Syne', sans-serif;
+          font-size: 15.5px; font-weight: 700; color: #F0F4F8;
+        }
+
+        /* ── Metrics ─────────────────────────────────────────── */
+        .mo-metrics {
+          display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+        }
+        .mo-mc { border-left: 2px solid #0A66C2; padding: 9px 0 9px 14px; }
+        .mo-mv {
+          font-family: 'Syne', sans-serif;
+          font-size: 24px; font-weight: 800; color: #F0F4F8;
+          line-height: 1; margin-bottom: 3px;
+        }
+        .mo-ml {
+          font-family: 'Inter', sans-serif;
+          font-size: 11px; font-weight: 600; color: #F0F4F8; margin-bottom: 3px;
+        }
+        .mo-md {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: #3D5470; line-height: 1.5;
+        }
+
+        /* ── Status chips ────────────────────────────────────── */
+        .mo-chips {
+          display: flex; flex-direction: column; gap: 6px;
+          position: absolute; top: 20px; right: 12px; z-index: 20;
+        }
+        .mo-chip {
+          display: flex; align-items: center; gap: 6px;
+          padding: 5px 11px;
+          background: rgba(8,13,20,.95);
+          border: 0.5px solid #1C2A3A;
+          border-radius: 6px;
+          backdrop-filter: blur(10px);
+        }
+        .mo-cdot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .mo-clbl {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: #8FA3B8; letter-spacing: .05em;
+        }
+        .mo-cval {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; font-weight: 500;
+        }
+
+        /* ── Bottom cert bar ─────────────────────────────────── */
+        .mo-bar {
+          border-top: 0.5px solid #1C2A3A;
+          padding: 13px 48px;
+          display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+          position: relative; z-index: 10;
+        }
+        .mo-blbl {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 9px; color: #3D5470;
+          letter-spacing: .1em; text-transform: uppercase; flex-shrink: 0;
+        }
+        .mo-ctag {
+          font-family: 'IBM Plex Mono', monospace;
+          font-size: 10px; color: #3D5470;
+          padding: 3px 9px; border: 0.5px solid #1C2A3A;
+          border-radius: 4px; letter-spacing: .04em;
+        }
+
+        /* ── ISO layer animations ────────────────────────────── */
+        @keyframes mo-fl0 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        @keyframes mo-fl1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        @keyframes mo-fl2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        @keyframes mo-fl3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        @keyframes mo-fl4 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        @keyframes mo-bmpulse { 0%,100%{opacity:.3} 50%{opacity:.95} }
+        @keyframes mo-orb1 {
+          from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+          to   { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+        }
+        @keyframes mo-orb2 {
+          from { transform: rotate(180deg) translateX(46px) rotate(-180deg); }
+          to   { transform: rotate(540deg) translateX(46px) rotate(-540deg); }
+        }
+        @keyframes mo-pbar { 0%{width:0} 100%{width:96%} }
+
+        .mo-g0 { animation: mo-fl0 9s ease-in-out infinite 0s; }
+        .mo-g1 { animation: mo-fl1 8.5s ease-in-out infinite .3s; }
+        .mo-g2 { animation: mo-fl2 8s ease-in-out infinite .6s; }
+        .mo-g3 { animation: mo-fl3 7.5s ease-in-out infinite .9s; }
+        .mo-g4 { animation: mo-fl4 7s ease-in-out infinite 1.2s; }
+        .mo-beam { animation: mo-bmpulse 3s ease-in-out infinite; }
+        .mo-o1  { animation: mo-orb1 7s linear infinite; }
+        .mo-o2  { animation: mo-orb2 11s linear infinite; }
+        .mo-pbfill { animation: mo-pbar 2.2s ease-out forwards 1.8s; width: 0; }
+
+        /* ── Reveal ──────────────────────────────────────────── */
+        .mo-rv {
+          opacity: 0; transform: translateY(10px);
+          animation: mo-rvin .55s ease forwards;
+          animation-delay: var(--d, 0s);
+        }
+        @keyframes mo-rvin { to { opacity:1; transform:none; } }
+
+        /* ── Responsive ──────────────────────────────────────── */
+        @media (max-width: 1023px) {
+          .mo-right-col { display: none !important; }
+          .mo-hero-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .mo-scan { display: none; }
+          .mo-rv { animation: none; opacity: 1; transform: none; }
+          .mo-g0,.mo-g1,.mo-g2,.mo-g3,.mo-g4,
+          .mo-beam,.mo-o1,.mo-o2 { animation: none; }
+        }
+      `}</style>
+
+      <section
         style={{
-          left: tooltip.x + 20,
-          top: tooltip.y + 20,
+          background: 'var(--mo-void)',
+          paddingTop: 80,
+          position: 'relative',
+          overflow: 'hidden',
+          minHeight: '100vh',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-fuchsia-500/5 rounded-xl pointer-events-none" />
-        <h4 className="text-sm font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2 font-display uppercase tracking-wider">
-          {tooltip.title}
-        </h4>
-        <p className="text-[13px] text-gray-300 leading-relaxed font-medium">{tooltip.content}</p>
-      </div>
+        {/* Scanner */}
+        <div ref={scanRef} className="mo-scan" style={{ position: 'absolute' }} />
 
-      {/* Background ambient glow */}
-      <div
-        className="parallax-layer absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"
-        data-depth="0"
-        data-scroll-depth="0.3"
-      />
-      <div
-        className="parallax-layer absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-fuchsia-600/10 rounded-full blur-[150px] pointer-events-none"
-        data-depth="0"
-        data-scroll-depth="0.2"
-      />
+        {/* Grid background */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            backgroundImage:
+              'linear-gradient(rgba(28,42,58,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(28,42,58,.4) 1px,transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'radial-gradient(ellipse 90% 80% at 50% 0%,black 15%,transparent 100%)',
+            WebkitMaskImage:
+              'radial-gradient(ellipse 90% 80% at 50% 0%,black 15%,transparent 100%)',
+          }}
+        />
 
-      <div className="container mx-auto px-6 max-w-7xl relative z-10">
-        {/* Hero Top */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-32">
-          <div className="max-w-xl relative z-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-              Quantitative Intelligence Engine v3.0
+        {/* Ambient orbs */}
+        <div
+          style={{
+            position: 'absolute',
+            borderRadius: '50%',
+            filter: 'blur(100px)',
+            pointerEvents: 'none',
+            width: 480,
+            height: 480,
+            top: -120,
+            right: -60,
+            background: 'rgba(10,102,194,.14)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            borderRadius: '50%',
+            filter: 'blur(80px)',
+            pointerEvents: 'none',
+            width: 320,
+            height: 320,
+            bottom: -60,
+            left: -40,
+            background: 'rgba(0,180,216,.09)',
+          }}
+        />
+
+        {/* ── MAIN GRID ─────────────────────────────────────────────── */}
+        <div
+          className="mo-hero-grid"
+          style={{
+            maxWidth: 1320,
+            margin: '0 auto',
+            padding: '0 48px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 0,
+            minHeight: 'calc(100vh - 80px - 58px)',
+            alignItems: 'center',
+            position: 'relative',
+            zIndex: 10,
+          }}
+        >
+          {/* ══ LEFT COLUMN ════════════════════════════════════════════ */}
+          <div style={{ paddingTop: 48, paddingBottom: 48, paddingRight: 48 }}>
+            {/* Pill */}
+            <div className="mo-pill mo-rv" style={{ '--d': '.15s' } as React.CSSProperties}>
+              <span className="mo-pdot" />
+              inteligência decisória baseada em matemática
             </div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] mb-6 text-white tracking-tight">
-              Mathematical Precision for{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
-                Enterprise Growth
-              </span>
+
+            {/* H1 */}
+            <h1 className="mo-h1 mo-rv" style={{ '--d': '.3s' } as React.CSSProperties}>
+              Suas decisões são tão
+              <br />
+              <span style={{ color: '#00B4D8' }}>confiáveis</span>
+              <br />
+              quanto os dados
+              <br />
+              por trás delas?
             </h1>
-            <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-md font-medium">
-              Transform raw data into strategic advantage with advanced mathematical modeling,
-              predictive analytics, and optimization algorithms.
+
+            {/* Subtitle */}
+            <p className="mo-sub mo-rv" style={{ '--d': '.45s' } as React.CSSProperties}>
+              A MathOps une Lean Six Sigma, modelagem matemática e Business Intelligence para que
+              sua empresa decida com segurança, evidência e previsibilidade.
             </p>
-            <Button
-              className="bg-blue-600 hover:bg-blue-500 text-white px-8 h-14 rounded-xl text-base font-medium transition-all hover:scale-105 animate-neon-breathe"
-              asChild
-            >
-              <a href="#contact">Schedule a Strategy Call</a>
-            </Button>
+
+            {/* CTAs */}
+            <div className="mo-cta-row mo-rv" style={{ '--d': '.58s' } as React.CSSProperties}>
+              <a className="mo-cta-p" href="#diagnostico">
+                Diagnóstico Estratégico Gratuito
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 8h10M9 4l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a className="mo-cta-s" href="#cases">
+                Ver evidências
+              </a>
+            </div>
+
+            {/* Manifesto */}
+            <div className="mo-manifesto mo-rv" style={{ '--d': '.7s' } as React.CSSProperties}>
+              <div className="mo-mtag">manifesto</div>
+              {MANIFESTO.map((m, i) => (
+                <div key={i} className="mo-mrow">
+                  <span className="mo-mneg">{m.neg}</span>
+                  <span className="mo-marr">→</span>
+                  <span className="mo-maff">{m.aff}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Metrics */}
+            <div className="mo-metrics mo-rv" style={{ '--d': '.85s' } as React.CSSProperties}>
+              {METRICS.map((m, i) => (
+                <div key={i} className="mo-mc">
+                  <div className="mo-mv">{m.val}</div>
+                  <div className="mo-ml">{m.label}</div>
+                  <div className="mo-md">{m.ctx}</div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="relative w-full aspect-square flex items-center justify-center perspective-[1000px] z-10">
+          {/* ══ RIGHT COLUMN — 3D ISO STACK ════════════════════════════ */}
+          <div
+            className="mo-right-col"
+            style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingTop: 48,
+              paddingBottom: 48,
+              minHeight: 600,
+            }}
+          >
+            {/* Status chips */}
+            <div className="mo-chips mo-rv" style={{ '--d': '.9s' } as React.CSSProperties}>
+              {CHIPS.map((c, i) => (
+                <div key={i} className="mo-chip">
+                  <span
+                    className="mo-cdot"
+                    style={{
+                      background: c.color,
+                      boxShadow: c.shadow ? `0 0 6px ${c.shadow}` : undefined,
+                    }}
+                  />
+                  <span className="mo-clbl">{c.label}</span>
+                  <span className="mo-cval" style={{ color: c.valColor }}>
+                    {c.val}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* 3D Isometric SVG */}
             <svg
-              ref={svgRef}
-              className="w-[140%] h-[140%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-visible"
-              viewBox="0 0 1000 1000"
-              fill="none"
+              className="mo-rv"
+              style={
+                {
+                  '--d': '.4s',
+                  width: '100%',
+                  maxWidth: 500,
+                  overflow: 'visible',
+                  display: 'block',
+                } as React.CSSProperties
+              }
+              viewBox="0 0 520 490"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#00F5FF" stopOpacity="0.5" />
-                  <stop offset="100%" stopColor="#00F5FF" stopOpacity="0" />
-                </radialGradient>
-                <radialGradient id="glow-blue" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
-                </radialGradient>
-                <radialGradient id="glow-violet" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
-                </radialGradient>
-                <radialGradient id="glow-magenta" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#FF3EF5" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#FF3EF5" stopOpacity="0" />
-                </radialGradient>
-
-                <linearGradient id="obsidian-base" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#1A1C24" />
-                  <stop offset="100%" stopColor="#05070B" />
+                {/* Top faces */}
+                <linearGradient id="mo-tGrey" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#111820" />
+                  <stop offset="100%" stopColor="#0C1219" />
                 </linearGradient>
-
-                <linearGradient id="glass-panel" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.15" />
-                  <stop offset="50%" stopColor="#ffffff" stopOpacity="0.02" />
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+                <linearGradient id="mo-tBlue" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#0D2040" />
+                  <stop offset="100%" stopColor="#091530" />
                 </linearGradient>
-
-                <linearGradient id="glass-layer" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#00F5FF" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02" />
+                <linearGradient id="mo-tCyan" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#092838" />
+                  <stop offset="100%" stopColor="#061C28" />
                 </linearGradient>
-
-                <filter id="blur-xl">
-                  <feGaussianBlur stdDeviation="32" />
+                <linearGradient id="mo-tGreen" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#0A2218" />
+                  <stop offset="100%" stopColor="#061610" />
+                </linearGradient>
+                {/* Left faces */}
+                <linearGradient id="mo-lGrey" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#080D14" />
+                  <stop offset="100%" stopColor="#04060A" />
+                </linearGradient>
+                <linearGradient id="mo-lBlue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#060E20" />
+                  <stop offset="100%" stopColor="#030A18" />
+                </linearGradient>
+                <linearGradient id="mo-lCyan" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#071820" />
+                  <stop offset="100%" stopColor="#041018" />
+                </linearGradient>
+                <linearGradient id="mo-lGreen" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#061410" />
+                  <stop offset="100%" stopColor="#030C09" />
+                </linearGradient>
+                {/* Right faces */}
+                <linearGradient id="mo-rGrey" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#0A1220" />
+                  <stop offset="100%" stopColor="#060A14" />
+                </linearGradient>
+                <linearGradient id="mo-rBlue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#081428" />
+                  <stop offset="100%" stopColor="#050F1E" />
+                </linearGradient>
+                <linearGradient id="mo-rCyan" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#082030" />
+                  <stop offset="100%" stopColor="#051428" />
+                </linearGradient>
+                <linearGradient id="mo-rGreen" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#081C14" />
+                  <stop offset="100%" stopColor="#041009" />
+                </linearGradient>
+                {/* Beam */}
+                <linearGradient id="mo-beamG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#00B4D8" stopOpacity="0" />
+                  <stop offset="28%" stopColor="#00B4D8" stopOpacity="1" />
+                  <stop offset="72%" stopColor="#0A66C2" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#0A66C2" stopOpacity="0" />
+                </linearGradient>
+                {/* Filters */}
+                <filter id="mo-glow" x="-40%" y="-40%" width="180%" height="180%">
+                  <feGaussianBlur stdDeviation="4" result="b" />
+                  <feMerge>
+                    <feMergeNode in="b" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
                 </filter>
-                <filter id="blur-lg">
-                  <feGaussianBlur stdDeviation="24" />
+                <filter id="mo-glowSm" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="2" result="b" />
+                  <feMerge>
+                    <feMergeNode in="b" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
                 </filter>
-                <filter id="glow-heavy" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="12" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-                <filter id="glow-light" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                <filter id="mo-glowXl" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="9" result="b" />
+                  <feMerge>
+                    <feMergeNode in="b" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
                 </filter>
               </defs>
 
-              {/* Parallax Layer -0.1: Volumetric Backgrounds */}
-              <g className="parallax-layer" data-depth="-0.1" data-scroll-depth="0.4">
-                <circle
-                  cx="500"
-                  cy="500"
-                  r="400"
-                  fill="url(#glow-violet)"
-                  filter="url(#blur-xl)"
-                  className="animate-pulse"
-                  style={{ animationDuration: '8s' }}
+              {/* Ambient glows */}
+              <ellipse
+                cx="260"
+                cy="320"
+                rx="180"
+                ry="65"
+                fill="#0A66C2"
+                opacity=".13"
+                filter="url(#mo-glowXl)"
+              />
+              <ellipse
+                cx="260"
+                cy="235"
+                rx="105"
+                ry="42"
+                fill="#00B4D8"
+                opacity=".11"
+                filter="url(#mo-glowXl)"
+              />
+              <ellipse
+                cx="260"
+                cy="155"
+                rx="65"
+                ry="28"
+                fill="#22C55E"
+                opacity=".09"
+                filter="url(#mo-glowXl)"
+              />
+
+              {/* ── Layer 0: DADOS BRUTOS (grey) ── */}
+              <g className="mo-g0">
+                <polygon
+                  points="260,332 375,389 260,446 145,389"
+                  fill="url(#mo-tGrey)"
+                  stroke="#1C2A3A"
+                  strokeWidth="1"
                 />
-                <circle
-                  cx="300"
-                  cy="600"
-                  r="300"
-                  fill="url(#glow-cyan)"
-                  filter="url(#blur-xl)"
-                  className="animate-pulse"
-                  style={{ animationDuration: '6s', animationDelay: '1s' }}
+                <polygon
+                  points="375,389 260,446 260,478 375,421"
+                  fill="url(#mo-rGrey)"
+                  stroke="#1C2A3A"
+                  strokeWidth=".7"
                 />
-                <circle
-                  cx="700"
-                  cy="400"
-                  r="300"
-                  fill="url(#glow-magenta)"
-                  filter="url(#blur-xl)"
-                  className="animate-pulse"
-                  style={{ animationDuration: '7s', animationDelay: '2s' }}
+                <polygon
+                  points="145,389 260,446 260,478 145,421"
+                  fill="url(#mo-lGrey)"
+                  stroke="#1C2A3A"
+                  strokeWidth=".7"
+                />
+                <text
+                  x="260"
+                  y="412"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#3D5470"
+                  letterSpacing="2"
+                >
+                  DADOS BRUTOS
+                </text>
+                {/* Mini bar chart */}
+                <line
+                  x1="210"
+                  y1="418"
+                  x2="222"
+                  y2="424"
+                  stroke="#3D5470"
+                  strokeWidth="2.5"
+                  opacity=".4"
+                />
+                <line
+                  x1="228"
+                  y1="413"
+                  x2="240"
+                  y2="419"
+                  stroke="#3D5470"
+                  strokeWidth="3.5"
+                  opacity=".45"
+                />
+                <line
+                  x1="247"
+                  y1="407"
+                  x2="259"
+                  y2="413"
+                  stroke="#3D5470"
+                  strokeWidth="5"
+                  opacity=".5"
+                />
+                <line
+                  x1="266"
+                  y1="407"
+                  x2="278"
+                  y2="413"
+                  stroke="#3D5470"
+                  strokeWidth="3.5"
+                  opacity=".45"
+                />
+                <line
+                  x1="285"
+                  y1="413"
+                  x2="297"
+                  y2="419"
+                  stroke="#3D5470"
+                  strokeWidth="2.5"
+                  opacity=".4"
                 />
               </g>
 
-              {/* Parallax Layer 0.1: Particles and Grid */}
-              <g className="parallax-layer" data-depth="0.1" data-scroll-depth="0.15">
-                <g className="animate-float" style={{ animationDuration: '10s' }}>
-                  <path
-                    d="M 0 500 Q 250 400 500 500 T 1000 500"
-                    fill="none"
-                    stroke="url(#glow-cyan)"
-                    strokeWidth="2"
-                    strokeDasharray="10 20"
-                    opacity="0.3"
-                    className="animate-pulse"
-                  />
-                  <path
-                    d="M 0 450 Q 250 550 500 450 T 1000 450"
-                    fill="none"
-                    stroke="url(#glow-magenta)"
-                    strokeWidth="1"
-                    strokeDasharray="5 15"
-                    opacity="0.2"
-                    className="animate-pulse"
-                  />
-                </g>
-              </g>
-
-              {/* Parallax Layer 0.2: Base Platform */}
-              <g className="parallax-layer" data-depth="0.2" data-scroll-depth="0.1">
-                <g className="animate-float" style={{ animationDuration: '8s' }}>
-                  <path
-                    d="M 500 700 L 760 570 L 760 620 L 500 750 Z"
-                    fill="#05070B"
-                    stroke="#00F5FF"
-                    strokeOpacity="0.3"
-                    strokeWidth="1"
-                  />
-                  <path
-                    d="M 240 570 L 500 700 L 500 750 L 240 620 Z"
-                    fill="#0A0D14"
-                    stroke="#00F5FF"
-                    strokeOpacity="0.3"
-                    strokeWidth="1"
-                  />
-                  <path
-                    d="M 500 440 L 760 570 L 500 700 L 240 570 Z"
-                    fill="url(#obsidian-base)"
-                    stroke="#00F5FF"
-                    strokeOpacity="0.5"
-                    strokeWidth="2"
-                    filter="url(#glow-light)"
-                  />
-                  <path
-                    d="M 500 470 L 690 570 L 500 670 L 310 570 Z"
-                    fill="none"
-                    stroke="#3B82F6"
-                    strokeOpacity="0.4"
-                    strokeWidth="1"
-                    strokeDasharray="4 4"
-                  />
-                  <path
-                    d="M 500 500 L 630 570 L 500 640 L 370 570 Z"
-                    fill="none"
-                    stroke="#FF3EF5"
-                    strokeOpacity="0.3"
-                    strokeWidth="1"
-                  />
-                </g>
-              </g>
-
-              {/* Parallax Layer 0.5: Floating Equations Background */}
-              <g
-                className="parallax-layer"
-                data-depth="0.5"
-                data-scroll-depth="0.08"
-                filter="url(#glow-light)"
-              >
+              {/* ── Layer 1: MAPEAMENTO LEAN (blue) ── */}
+              <g className="mo-g1">
+                <polygon
+                  points="260,262 375,319 260,376 145,319"
+                  fill="url(#mo-tBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth="1.2"
+                />
+                <polygon
+                  points="375,319 260,376 260,408 375,351"
+                  fill="url(#mo-rBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth=".8"
+                />
+                <polygon
+                  points="145,319 260,376 260,408 145,351"
+                  fill="url(#mo-lBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth=".8"
+                />
+                <polygon
+                  points="260,262 375,319 260,376 145,319"
+                  fill="none"
+                  stroke="#0A66C2"
+                  strokeWidth="1.5"
+                  opacity=".5"
+                  filter="url(#mo-glowSm)"
+                />
                 <text
-                  x="250"
-                  y="200"
-                  fill="#00F5FF"
+                  x="260"
+                  y="342"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#8FA3B8"
+                  letterSpacing="2"
+                >
+                  MAPEAMENTO LEAN
+                </text>
+                {/* DMAIC dots */}
+                <circle cx="196" cy="332" r="4.5" fill="#0A66C2" filter="url(#mo-glowSm)" />
+                <line
+                  x1="201"
+                  y1="334"
+                  x2="222"
+                  y2="345"
+                  stroke="#0A66C2"
+                  strokeWidth="1.1"
+                  strokeDasharray="3,2"
+                  opacity=".7"
+                />
+                <circle cx="226" cy="347" r="4.5" fill="#0A66C2" filter="url(#mo-glowSm)" />
+                <line
+                  x1="231"
+                  y1="346"
+                  x2="256"
+                  y2="346"
+                  stroke="#0A66C2"
+                  strokeWidth="1.1"
+                  strokeDasharray="3,2"
+                  opacity=".7"
+                />
+                <circle cx="260" cy="346" r="4.5" fill="#0A66C2" filter="url(#mo-glowSm)" />
+                <line
+                  x1="265"
+                  y1="345"
+                  x2="286"
+                  y2="334"
+                  stroke="#0A66C2"
+                  strokeWidth="1.1"
+                  strokeDasharray="3,2"
+                  opacity=".7"
+                />
+                <circle cx="290" cy="332" r="4.5" fill="#22C55E" filter="url(#mo-glowSm)" />
+              </g>
+
+              {/* ── Layer 2: MODELAGEM MATEMÁTICA (cyan) ── */}
+              <g className="mo-g2">
+                <polygon
+                  points="260,192 375,249 260,306 145,249"
+                  fill="url(#mo-tCyan)"
+                  stroke="#00B4D8"
+                  strokeWidth="1.2"
+                />
+                <polygon
+                  points="375,249 260,306 260,338 375,281"
+                  fill="url(#mo-rCyan)"
+                  stroke="#00B4D8"
+                  strokeWidth=".8"
+                />
+                <polygon
+                  points="145,249 260,306 260,338 145,281"
+                  fill="url(#mo-lCyan)"
+                  stroke="#00B4D8"
+                  strokeWidth=".8"
+                />
+                <polygon
+                  points="260,192 375,249 260,306 145,249"
+                  fill="none"
+                  stroke="#00B4D8"
+                  strokeWidth="2"
+                  opacity=".6"
+                  filter="url(#mo-glowSm)"
+                />
+                <text
+                  x="260"
+                  y="272"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#00B4D8"
+                  letterSpacing="2"
+                >
+                  MODELAGEM MAT.
+                </text>
+                <text
+                  x="182"
+                  y="262"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="11"
+                  fill="#00B4D8"
+                  opacity=".85"
+                  filter="url(#mo-glowSm)"
+                >
+                  ∂f/∂x
+                </text>
+                <text
+                  x="228"
+                  y="283"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="11"
+                  fill="#8FA3B8"
+                  opacity=".65"
+                >
+                  R²
+                </text>
+                <text
+                  x="252"
+                  y="265"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="11"
+                  fill="#00B4D8"
+                  opacity=".85"
+                  filter="url(#mo-glowSm)"
+                >
+                  σ=4.8
+                </text>
+                <text
+                  x="302"
+                  y="275"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#8FA3B8"
+                  opacity=".5"
+                >
+                  lim→∞
+                </text>
+              </g>
+
+              {/* ── Layer 3: VALIDAÇÃO SIX SIGMA (blue bright) ── */}
+              <g className="mo-g3">
+                <polygon
+                  points="260,122 375,179 260,236 145,179"
+                  fill="url(#mo-tBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth="1.5"
+                />
+                <polygon
+                  points="375,179 260,236 260,268 375,211"
+                  fill="url(#mo-rBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth="1"
+                />
+                <polygon
+                  points="145,179 260,236 260,268 145,211"
+                  fill="url(#mo-lBlue)"
+                  stroke="#0A66C2"
+                  strokeWidth="1"
+                />
+                <polygon
+                  points="260,122 375,179 260,236 145,179"
+                  fill="none"
+                  stroke="#0A66C2"
+                  strokeWidth="2.2"
+                  opacity=".7"
+                  filter="url(#mo-glow)"
+                />
+                <text
+                  x="260"
+                  y="202"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#8FA3B8"
+                  letterSpacing="1"
+                >
+                  VALIDAÇÃO SIX SIGMA
+                </text>
+                {/* Progress bar */}
+                <rect x="186" y="211" width="148" height="7" rx="3.5" fill="#1C2A3A" />
+                <rect
+                  x="186"
+                  y="211"
+                  width="0"
+                  height="7"
+                  rx="3.5"
+                  fill="#0A66C2"
+                  className="mo-pbfill"
+                  filter="url(#mo-glowSm)"
+                />
+                <text
+                  x="338"
+                  y="219"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="8.5"
+                  fill="#0A66C2"
+                >
+                  4.82σ
+                </text>
+              </g>
+
+              {/* ── Layer 4: DECISÃO CERTIFICADA (green, top) ── */}
+              <g className="mo-g4">
+                <polygon
+                  points="260,52 375,109 260,166 145,109"
+                  fill="url(#mo-tGreen)"
+                  stroke="#22C55E"
+                  strokeWidth="1.5"
+                />
+                <polygon
+                  points="375,109 260,166 260,198 375,141"
+                  fill="url(#mo-rGreen)"
+                  stroke="#22C55E"
+                  strokeWidth="1"
+                />
+                <polygon
+                  points="145,109 260,166 260,198 145,141"
+                  fill="url(#mo-lGreen)"
+                  stroke="#22C55E"
+                  strokeWidth="1"
+                />
+                <polygon
+                  points="260,52 375,109 260,166 145,109"
+                  fill="none"
+                  stroke="#22C55E"
+                  strokeWidth="2.5"
+                  opacity=".8"
+                  filter="url(#mo-glow)"
+                />
+                <text
+                  x="260"
+                  y="130"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#22C55E"
+                  letterSpacing="1"
+                  filter="url(#mo-glowSm)"
+                >
+                  DECISÃO CERTIFICADA
+                </text>
+                <text
+                  x="236"
+                  y="151"
+                  fontFamily="IBM Plex Mono,monospace"
                   fontSize="16"
-                  fontFamily="monospace"
-                  fontStyle="italic"
-                  opacity="0.8"
-                  className="animate-pulse"
-                  style={{ animationDuration: '4s' }}
+                  fill="#22C55E"
+                  opacity=".95"
+                  filter="url(#mo-glow)"
                 >
-                  ∂f / ∂x
+                  ✓
                 </text>
                 <text
-                  x="750"
-                  y="220"
-                  fill="#FF3EF5"
-                  fontSize="18"
-                  fontFamily="monospace"
-                  fontStyle="italic"
-                  opacity="0.7"
-                  className="animate-pulse"
-                  style={{ animationDuration: '5s' }}
+                  x="256"
+                  y="151"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="9"
+                  fill="#22C55E"
+                  opacity=".8"
                 >
-                  A x = b
+                  APROVADA
+                </text>
+              </g>
+
+              {/* Vertical beam */}
+              <rect
+                className="mo-beam"
+                x="257"
+                y="52"
+                width="6"
+                height="394"
+                fill="url(#mo-beamG)"
+                opacity=".7"
+                filter="url(#mo-glowSm)"
+              />
+
+              {/* Orbiting particles */}
+              <g transform="translate(260,204)">
+                <g className="mo-o1">
+                  <circle cx="0" cy="0" r="4.5" fill="#00B4D8" filter="url(#mo-glow)" />
+                </g>
+              </g>
+              <g transform="translate(260,274)">
+                <g className="mo-o2">
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="3.5"
+                    fill="#0A66C2"
+                    filter="url(#mo-glowSm)"
+                    opacity=".9"
+                  />
+                </g>
+              </g>
+
+              {/* Floating equation panel */}
+              <g className="mo-g4" style={{ animationDelay: '.5s' }}>
+                <rect
+                  x="172"
+                  y="5"
+                  width="176"
+                  height="42"
+                  rx="7"
+                  fill="#0E1620"
+                  stroke="#1C2A3A"
+                  strokeWidth="1"
+                />
+                <text
+                  x="260"
+                  y="21"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="10"
+                  fill="#00B4D8"
+                  filter="url(#mo-glowSm)"
+                >
+                  P(Decisão | Dados)
                 </text>
                 <text
-                  x="350"
-                  y="750"
-                  fill="#8B5CF6"
-                  fontSize="16"
-                  fontFamily="monospace"
-                  fontStyle="italic"
-                  opacity="0.8"
-                  className="animate-pulse"
-                  style={{ animationDuration: '3s' }}
+                  x="260"
+                  y="39"
+                  textAnchor="middle"
+                  fontFamily="IBM Plex Mono,monospace"
+                  fontSize="13"
+                  fill="#F0F4F8"
+                  fontWeight="500"
                 >
-                  ∫ f(x) dx
+                  = 0.996
                 </text>
-                <text
-                  x="650"
-                  y="700"
-                  fill="#3B82F6"
-                  fontSize="16"
-                  fontFamily="monospace"
-                  fontStyle="italic"
-                  opacity="0.8"
-                  className="animate-pulse"
-                  style={{ animationDuration: '6s' }}
-                >
-                  lim(x→∞)
+                <line
+                  x1="260"
+                  y1="47"
+                  x2="260"
+                  y2="52"
+                  stroke="#1C2A3A"
+                  strokeWidth="1"
+                  strokeDasharray="2,2"
+                />
+              </g>
+
+              {/* Layer numbers — left margin */}
+              <g fontFamily="IBM Plex Mono,monospace" fontSize="9" fill="#2A3C50">
+                <text x="108" y="112">
+                  04 ·
                 </text>
+                <line
+                  x1="123"
+                  y1="109"
+                  x2="143"
+                  y2="109"
+                  stroke="#1C2A3A"
+                  strokeWidth=".5"
+                  strokeDasharray="2,2"
+                />
+                <text x="108" y="182">
+                  03 ·
+                </text>
+                <line
+                  x1="123"
+                  y1="179"
+                  x2="143"
+                  y2="179"
+                  stroke="#1C2A3A"
+                  strokeWidth=".5"
+                  strokeDasharray="2,2"
+                />
+                <text x="108" y="252">
+                  02 ·
+                </text>
+                <line
+                  x1="123"
+                  y1="249"
+                  x2="143"
+                  y2="249"
+                  stroke="#1C2A3A"
+                  strokeWidth=".5"
+                  strokeDasharray="2,2"
+                />
+                <text x="108" y="322">
+                  01 ·
+                </text>
+                <line
+                  x1="123"
+                  y1="319"
+                  x2="143"
+                  y2="319"
+                  stroke="#1C2A3A"
+                  strokeWidth=".5"
+                  strokeDasharray="2,2"
+                />
+                <text x="108" y="392">
+                  00 ·
+                </text>
+                <line
+                  x1="123"
+                  y1="389"
+                  x2="143"
+                  y2="389"
+                  stroke="#1C2A3A"
+                  strokeWidth=".5"
+                  strokeDasharray="2,2"
+                />
               </g>
 
-              {/* Parallax Layer 0.6: Computational Core */}
-              <g className="parallax-layer" data-depth="0.6" data-scroll-depth="0">
-                <g
-                  className="animate-float"
-                  style={{ animationDuration: '7s', animationDelay: '1s' }}
-                >
-                  <path
-                    d="M 240 570 L 500 440 L 500 120 L 240 250 Z"
-                    fill="url(#glass-panel)"
-                    stroke="#ffffff"
-                    strokeOpacity="0.1"
-                  />
-                  <path
-                    d="M 760 570 L 500 440 L 500 120 L 760 250 Z"
-                    fill="url(#glass-panel)"
-                    stroke="#ffffff"
-                    strokeOpacity="0.1"
-                  />
-
-                  <path
-                    d="M 500 650 L 500 200"
-                    stroke="url(#glow-cyan)"
-                    strokeWidth="6"
-                    filter="url(#glow-heavy)"
-                    className="animate-pulse"
-                  />
-
-                  {[
-                    { offset: -40, color: '#00F5FF', name: 'RAW_DATA' },
-                    { offset: -100, color: '#3B82F6', name: 'PROCESSING' },
-                    { offset: -160, color: '#8B5CF6', name: 'OPTIMIZATION' },
-                    { offset: -220, color: '#FF3EF5', name: 'PREDICTIVE' },
-                    { offset: -280, color: '#00F5FF', name: 'INSIGHTS' },
-                  ].map((layer, i) => (
-                    <g key={i} transform={`translate(0, ${layer.offset})`}>
-                      <path
-                        d="M 500 450 L 740 570 L 500 690 L 260 570 Z"
-                        fill="url(#glass-layer)"
-                        stroke={layer.color}
-                        strokeOpacity="0.6"
-                        strokeWidth="1.5"
-                      />
-                      {i === 0 && (
-                        <g>
-                          <path
-                            d="M 400 570 L 600 570 M 450 540 L 550 600 M 500 510 L 500 630"
-                            stroke={layer.color}
-                            strokeOpacity="0.4"
-                            strokeWidth="1"
-                          />
-                          <circle
-                            cx="500"
-                            cy="570"
-                            r="3"
-                            fill={layer.color}
-                            filter="url(#glow-light)"
-                          />
-                          <circle cx="450" cy="540" r="2" fill={layer.color} />
-                          <circle cx="550" cy="600" r="2" fill={layer.color} />
-                        </g>
-                      )}
-                      {i === 1 && (
-                        <g>
-                          <path
-                            d="M 320 570 Q 410 480 500 570 T 680 570"
-                            fill="none"
-                            stroke={layer.color}
-                            strokeWidth="2"
-                            filter="url(#glow-light)"
-                          />
-                          <path
-                            d="M 380 530 Q 500 650 620 530"
-                            fill="none"
-                            stroke="#FF3EF5"
-                            strokeWidth="1.5"
-                            strokeDasharray="4 4"
-                          />
-                        </g>
-                      )}
-                      {i === 2 && (
-                        <g>
-                          <ellipse
-                            cx="500"
-                            cy="570"
-                            rx="80"
-                            ry="40"
-                            fill="none"
-                            stroke={layer.color}
-                            strokeWidth="2"
-                            filter="url(#glow-light)"
-                          />
-                          <ellipse
-                            cx="500"
-                            cy="570"
-                            rx="40"
-                            ry="20"
-                            fill="none"
-                            stroke="#00F5FF"
-                            strokeWidth="1.5"
-                          />
-                          <circle
-                            cx="500"
-                            cy="570"
-                            r="4"
-                            fill="#00F5FF"
-                            filter="url(#glow-heavy)"
-                          />
-                          <path
-                            d="M 500 570 L 580 530 M 500 570 L 420 610"
-                            stroke={layer.color}
-                            strokeWidth="1"
-                            strokeDasharray="2 2"
-                          />
-                        </g>
-                      )}
-                      {i === 3 && (
-                        <g>
-                          <path
-                            d="M 500 570 L 560 540 M 500 570 L 440 540 M 500 570 L 560 600 M 500 570 L 440 600"
-                            stroke={layer.color}
-                            strokeWidth="2"
-                            filter="url(#glow-light)"
-                          />
-                          <circle cx="560" cy="540" r="3" fill="#ffffff" />
-                          <circle cx="440" cy="540" r="3" fill="#ffffff" />
-                          <circle cx="560" cy="600" r="3" fill="#ffffff" />
-                          <circle cx="440" cy="600" r="3" fill="#ffffff" />
-                          <path
-                            d="M 560 540 L 600 520 M 440 600 L 400 620"
-                            stroke={layer.color}
-                            strokeWidth="1"
-                            opacity="0.6"
-                          />
-                        </g>
-                      )}
-                      {i === 4 && (
-                        <g>
-                          <path
-                            d="M 500 550 L 520 570 L 500 590 L 480 570 Z"
-                            fill="#ffffff"
-                            filter="url(#glow-heavy)"
-                          />
-                          <circle cx="500" cy="570" r="25" fill="url(#glow-cyan)" />
-                          <path
-                            d="M 500 550 L 500 450"
-                            stroke="#00F5FF"
-                            strokeWidth="3"
-                            filter="url(#glow-heavy)"
-                          />
-                        </g>
-                      )}
-                    </g>
-                  ))}
-
-                  <g>
-                    <circle cx="500" cy="600" r="2.5" fill="#ffffff" filter="url(#glow-light)">
-                      <animate
-                        attributeName="cy"
-                        values="650; 200"
-                        dur="4s"
-                        repeatCount="indefinite"
-                      />
-                      <animate
-                        attributeName="opacity"
-                        values="0; 1; 0"
-                        dur="4s"
-                        repeatCount="indefinite"
-                      />
-                    </circle>
-                    <circle cx="480" cy="600" r="2" fill="#00F5FF" filter="url(#glow-light)">
-                      <animate
-                        attributeName="cy"
-                        values="650; 200"
-                        dur="3s"
-                        repeatCount="indefinite"
-                        delay="1s"
-                      />
-                      <animate
-                        attributeName="opacity"
-                        values="0; 1; 0"
-                        dur="3s"
-                        repeatCount="indefinite"
-                        delay="1s"
-                      />
-                    </circle>
-                    <circle cx="520" cy="600" r="2" fill="#FF3EF5" filter="url(#glow-light)">
-                      <animate
-                        attributeName="cy"
-                        values="650; 200"
-                        dur="3.5s"
-                        repeatCount="indefinite"
-                        delay="2s"
-                      />
-                      <animate
-                        attributeName="opacity"
-                        values="0; 1; 0"
-                        dur="3.5s"
-                        repeatCount="indefinite"
-                        delay="2s"
-                      />
-                    </circle>
-                  </g>
-
-                  <path
-                    d="M 240 570 L 500 700 L 500 380 L 240 250 Z"
-                    fill="url(#glass-panel)"
-                    stroke="#00F5FF"
-                    strokeOpacity="0.4"
-                    strokeWidth="1"
-                  />
-                  <path
-                    d="M 760 570 L 500 700 L 500 380 L 760 250 Z"
-                    fill="url(#glass-panel)"
-                    stroke="#8B5CF6"
-                    strokeOpacity="0.4"
-                    strokeWidth="1"
-                  />
-                  <path
-                    d="M 500 700 L 500 380"
-                    stroke="#ffffff"
-                    strokeOpacity="0.5"
-                    strokeWidth="2"
-                    filter="url(#glow-light)"
-                  />
-                  <path
-                    d="M 500 120 L 760 250 L 500 380 L 240 250 Z"
-                    fill="url(#glass-panel)"
-                    stroke="#00F5FF"
-                    strokeOpacity="0.5"
-                    strokeWidth="1.5"
-                  />
-                </g>
-              </g>
-
-              {/* Parallax Layer 0.35: Left Holographic Panel */}
-              <g className="parallax-layer" data-depth="0.35" data-scroll-depth="-0.05">
-                <g
-                  className="animate-float cursor-crosshair"
-                  style={{ animationDuration: '7s', animationDelay: '1.2s' }}
-                  onMouseEnter={(e) =>
-                    handleTooltipEnter(
-                      e,
-                      'Predictive Modeling',
-                      'Bayesian inference networks computing conditional probabilities to forecast market dynamics with high confidence.',
-                    )
-                  }
-                  onMouseMove={handleTooltipMove}
-                  onMouseLeave={handleTooltipLeave}
-                >
-                  <g transform="matrix(-0.866, 0.5, 0, 1, 220, 300)">
-                    <rect
-                      width="200"
-                      height="280"
-                      fill="url(#glass-panel)"
-                      stroke="#00F5FF"
-                      strokeOpacity="0.4"
-                      rx="8"
-                    />
-                    <rect
-                      width="200"
-                      height="280"
-                      fill="#00F5FF"
-                      fillOpacity="0.02"
-                      filter="url(#glow-heavy)"
-                      rx="8"
-                    />
-
-                    <text
-                      x="20"
-                      y="30"
-                      fill="#00F5FF"
-                      fontSize="12"
-                      fontFamily="monospace"
-                      opacity="0.8"
-                    >
-                      FORECASTING
-                    </text>
-                    <text
-                      x="20"
-                      y="50"
-                      fill="#ffffff"
-                      fontSize="18"
-                      fontFamily="sans-serif"
-                      fontWeight="bold"
-                    >
-                      94.2% ACCURACY
-                    </text>
-
-                    <path
-                      d="M 20 150 Q 60 100 100 120 T 180 80"
-                      fill="none"
-                      stroke="#FF3EF5"
-                      strokeWidth="2"
-                      filter="url(#glow-light)"
-                    />
-                    <path
-                      d="M 20 180 Q 60 130 100 150 T 180 110"
-                      fill="none"
-                      stroke="#3B82F6"
-                      strokeWidth="1.5"
-                      strokeDasharray="4 4"
-                      opacity="0.7"
-                    />
-                    <circle cx="180" cy="80" r="4" fill="#ffffff" filter="url(#glow-heavy)" />
-
-                    <path
-                      d="M 20 200 L 180 200 M 20 160 L 180 160 M 20 120 L 180 120"
-                      stroke="#ffffff"
-                      strokeOpacity="0.1"
-                      strokeWidth="1"
-                    />
-
-                    <g filter="url(#glow-light)">
-                      <text
-                        x="20"
-                        y="230"
-                        fill="#00F5FF"
-                        fontSize="12"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                      >
-                        P(Y|X)
-                      </text>
-                      <text
-                        x="80"
-                        y="230"
-                        fill="#8B5CF6"
-                        fontSize="12"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                      >
-                        y = β₀ + β₁x
-                      </text>
-                      <text
-                        x="20"
-                        y="250"
-                        fill="#ffffff"
-                        fontSize="10"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                        opacity="0.9"
-                      >
-                        P(A|B) = P(B|A)P(A)/P(B)
-                      </text>
-                    </g>
-                  </g>
-                </g>
-              </g>
-
-              {/* Parallax Layer 0.4: Right Holographic Panel */}
-              <g className="parallax-layer" data-depth="0.4" data-scroll-depth="-0.08">
-                <g
-                  className="animate-float cursor-crosshair"
-                  style={{ animationDuration: '6.5s', animationDelay: '0.8s' }}
-                  onMouseEnter={(e) =>
-                    handleTooltipEnter(
-                      e,
-                      'Mathematical Optimization',
-                      'Gradient descent algorithms exploring objective functions to locate optimal operational minima and maximize efficiency.',
-                    )
-                  }
-                  onMouseMove={handleTooltipMove}
-                  onMouseLeave={handleTooltipLeave}
-                >
-                  <g transform="matrix(0.866, 0.5, 0, 1, 780, 300)">
-                    <rect
-                      width="200"
-                      height="280"
-                      fill="url(#glass-panel)"
-                      stroke="#8B5CF6"
-                      strokeOpacity="0.4"
-                      rx="8"
-                    />
-                    <rect
-                      width="200"
-                      height="280"
-                      fill="#8B5CF6"
-                      fillOpacity="0.02"
-                      filter="url(#glow-heavy)"
-                      rx="8"
-                    />
-
-                    <text
-                      x="20"
-                      y="30"
-                      fill="#8B5CF6"
-                      fontSize="12"
-                      fontFamily="monospace"
-                      opacity="0.8"
-                    >
-                      OPTIMIZATION
-                    </text>
-                    <text
-                      x="20"
-                      y="50"
-                      fill="#ffffff"
-                      fontSize="18"
-                      fontFamily="sans-serif"
-                      fontWeight="bold"
-                    >
-                      +28% EFFICIENCY
-                    </text>
-
-                    <rect x="20" y="160" width="20" height="40" fill="#3B82F6" opacity="0.6" />
-                    <rect x="50" y="130" width="20" height="70" fill="#3B82F6" opacity="0.8" />
-                    <rect x="80" y="100" width="20" height="100" fill="#8B5CF6" />
-                    <rect
-                      x="110"
-                      y="60"
-                      width="20"
-                      height="140"
-                      fill="#00F5FF"
-                      filter="url(#glow-light)"
-                    />
-
-                    <g filter="url(#glow-light)">
-                      <text
-                        x="20"
-                        y="230"
-                        fill="#00F5FF"
-                        fontSize="12"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                      >
-                        min f(x)
-                      </text>
-                      <text
-                        x="100"
-                        y="230"
-                        fill="#FF3EF5"
-                        fontSize="12"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                      >
-                        ŷ = f(x)
-                      </text>
-                      <text
-                        x="20"
-                        y="250"
-                        fill="#ffffff"
-                        fontSize="11"
-                        fontFamily="monospace"
-                        fontStyle="italic"
-                        opacity="0.9"
-                      >
-                        d²f / dx² &gt; 0
-                      </text>
-                    </g>
-                  </g>
-                </g>
-              </g>
-
-              {/* Parallax Layer 0.8: Top Lid Micro-panel */}
-              <g className="parallax-layer" data-depth="0.8" data-scroll-depth="-0.15">
-                <g
-                  className="animate-float"
-                  style={{ animationDuration: '5s', animationDelay: '0.5s' }}
-                >
-                  <g transform="matrix(0.866, 0.5, -0.866, 0.5, 500, -20)">
-                    <rect
-                      width="140"
-                      height="140"
-                      fill="url(#glass-panel)"
-                      stroke="#00F5FF"
-                      strokeOpacity="0.5"
-                      rx="8"
-                    />
-                    <rect
-                      width="140"
-                      height="140"
-                      fill="#00F5FF"
-                      fillOpacity="0.05"
-                      filter="url(#glow-heavy)"
-                      rx="8"
-                    />
-
-                    <circle
-                      cx="70"
-                      cy="70"
-                      r="30"
-                      fill="none"
-                      stroke="#FF3EF5"
-                      strokeWidth="2"
-                      strokeDasharray="4 4"
-                      className="animate-spin"
-                      style={{ animationDuration: '10s' }}
-                    />
-                    <circle
-                      cx="70"
-                      cy="70"
-                      r="15"
-                      fill="#00F5FF"
-                      opacity="0.8"
-                      filter="url(#glow-light)"
-                    />
-                    <circle cx="70" cy="70" r="5" fill="#ffffff" filter="url(#glow-heavy)" />
-
-                    <g filter="url(#glow-light)">
-                      <text
-                        x="10"
-                        y="20"
-                        fill="#00F5FF"
-                        fontSize="10"
-                        fontFamily="monospace"
-                        fontWeight="bold"
-                      >
-                        ∇f(x)=0
-                      </text>
-                      <text
-                        x="100"
-                        y="120"
-                        fill="#8B5CF6"
-                        fontSize="10"
-                        fontFamily="monospace"
-                        fontWeight="bold"
-                      >
-                        A⁻¹
-                      </text>
-                    </g>
-                  </g>
-                </g>
-              </g>
-
-              {/* Micro Panels */}
-              <g className="parallax-layer" data-depth="0.7" data-scroll-depth="-0.12">
-                <g
-                  className="animate-float"
-                  style={{ animationDuration: '4.5s', animationDelay: '2s' }}
-                >
-                  <g transform="matrix(-0.866, 0.5, 0, 1, 150, 480)">
-                    <rect
-                      width="120"
-                      height="60"
-                      fill="url(#glass-panel)"
-                      stroke="#FF3EF5"
-                      strokeOpacity="0.4"
-                      rx="4"
-                    />
-                    <text x="10" y="25" fill="#FF3EF5" fontSize="10" fontFamily="monospace">
-                      RISK REDUCTION
-                    </text>
-                    <text
-                      x="10"
-                      y="45"
-                      fill="#ffffff"
-                      fontSize="16"
-                      fontFamily="sans-serif"
-                      fontWeight="bold"
-                    >
-                      -42.3%
-                    </text>
-                    <path
-                      d="M 90 25 L 100 45 L 110 30"
-                      fill="none"
-                      stroke="#00F5FF"
-                      strokeWidth="2"
-                    />
-                  </g>
-                </g>
-              </g>
-
-              <g className="parallax-layer" data-depth="0.6" data-scroll-depth="-0.1">
-                <g
-                  className="animate-float"
-                  style={{ animationDuration: '5.5s', animationDelay: '1.5s' }}
-                >
-                  <g transform="matrix(0.866, 0.5, 0, 1, 850, 480)">
-                    <rect
-                      width="120"
-                      height="60"
-                      fill="url(#glass-panel)"
-                      stroke="#3B82F6"
-                      strokeOpacity="0.4"
-                      rx="4"
-                    />
-                    <text x="10" y="25" fill="#3B82F6" fontSize="10" fontFamily="monospace">
-                      REVENUE LIFT
-                    </text>
-                    <text
-                      x="10"
-                      y="45"
-                      fill="#ffffff"
-                      fontSize="16"
-                      fontFamily="sans-serif"
-                      fontWeight="bold"
-                    >
-                      +$2.4M
-                    </text>
-                    <path
-                      d="M 80 40 L 95 25 L 110 35"
-                      fill="none"
-                      stroke="#00F5FF"
-                      strokeWidth="2"
-                    />
-                  </g>
-                </g>
-              </g>
+              {/* Ground shadow */}
+              <ellipse
+                cx="260"
+                cy="462"
+                rx="134"
+                ry="15"
+                fill="#000"
+                opacity=".5"
+                filter="url(#mo-glow)"
+              />
             </svg>
           </div>
         </div>
 
-        {/* Value Proposition Bottom */}
-        <div className="grid md:grid-cols-3 gap-12 border-t border-white/10 pt-16 mt-16 relative">
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
-          {VALUE_PROPS.map((prop, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col items-start text-left relative z-20 group cursor-default"
-            >
-              <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 mb-6 group-hover:bg-blue-500/10 group-hover:border-cyan-500/30 transition-colors">
-                <prop.icon className="h-7 w-7 text-cyan-400" strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3 tracking-wide">{prop.title}</h3>
-              <p className="text-gray-400 text-[15px] leading-relaxed font-medium">
-                {prop.description}
-              </p>
-            </div>
+        {/* ── CERTIFICATION BAR ─────────────────────────────────────────── */}
+        <div className="mo-bar" style={{ maxWidth: 1320, margin: '0 auto', padding: '13px 48px' }}>
+          <span className="mo-blbl">metodologias certificadas</span>
+          {['Lean Six Sigma', 'DMAIC', 'PMBOK', 'ISO 9001', 'LGPD Compliance'].map((c) => (
+            <span key={c} className="mo-ctag">
+              {c}
+            </span>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }
