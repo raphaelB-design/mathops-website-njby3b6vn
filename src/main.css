@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,26 +6,38 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 238 82% 59%;
+    /* ── Shadcn base tokens (mantidos para compatibilidade) ── */
+    --background: 220 14% 4%;
+    --foreground: 210 20% 95%;
+    --card: 220 14% 6%;
+    --card-foreground: 210 20% 95%;
+    --popover: 220 14% 4%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 211 82% 40%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 5% 15%;
-    --muted-foreground: 240 5% 65%;
-    --accent: 240 5% 15%;
+    --secondary: 220 10% 12%;
+    --secondary-foreground: 210 20% 80%;
+    --muted: 220 10% 12%;
+    --muted-foreground: 210 10% 55%;
+    --accent: 197 100% 43%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 5% 15%;
-    --input: 240 5% 15%;
-    --ring: 238 82% 59%;
+    --border: 216 20% 14%;
+    --input: 216 20% 14%;
+    --ring: 211 82% 40%;
     --radius: 0.5rem;
+
+    /* ── MathOps design tokens ── */
+    --mo-void: #04060a;
+    --mo-deep: #080d14;
+    --mo-surface: #0e1620;
+    --mo-border: #1c2a3a;
+    --mo-blue: #0a66c2;
+    --mo-cyan: #00b4d8;
+    --mo-slate: #8fa3b8;
+    --mo-ghost: #3d5470;
+    --mo-white: #f0f4f8;
   }
 
   html {
@@ -33,16 +45,46 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased font-sans;
+    @apply antialiased;
+    background: var(--mo-void);
+    color: var(--mo-white);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
 
 @layer utilities {
+  /* ── Fonts ── */
+  .font-mono-plex {
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .font-display {
+    font-family: 'Syne', system-ui, sans-serif;
+  }
+
+  /* ── Animations ── */
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
   .animate-fade-in-up {
     animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* ── MathOps glassmorphism surfaces ── */
+  .mo-glass {
+    background: rgba(14, 22, 32, 0.85);
+    border: 0.5px solid var(--mo-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .mo-glass-deep {
+    background: rgba(8, 13, 20, 0.92);
+    border: 0.5px solid var(--mo-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 }
 
@@ -52,7 +94,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-15px);
+    transform: translateY(-12px);
   }
 }
 
@@ -65,4 +107,25 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--mo-void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mo-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mo-ghost);
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(0, 180, 216, 0.25);
+  color: var(--mo-white);
 }
