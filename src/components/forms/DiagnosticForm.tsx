@@ -401,7 +401,7 @@ export function DiagnosticForm({ onSuccess }: { onSuccess?: () => void }) {
 
         <Button
           type="submit"
-          className="w-full bg-[#00bcd4] hover:bg-[#00bcd4]/90 text-zinc-950 font-bold py-6 mt-6 transition-all shadow-[0_0_15px_rgba(0,188,212,0.2)] hover:shadow-[0_0_25px_rgba(0,188,212,0.4)]"
+          className="w-full bg-[#00bcd4] hover:bg-[#00bcd4]/90 text-zinc-950 font-bold py-6 mt-6 transition-all animate-neon-breathe"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Enviando...' : 'Receber diagnóstico preliminar'}

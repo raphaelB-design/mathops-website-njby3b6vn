@@ -80,7 +80,7 @@ export function ContactSection() {
           {!showForm && (
             <Button
               onClick={() => setShowForm(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-12 rounded-lg font-medium transition-all"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 h-14 rounded-xl font-medium transition-all animate-neon-breathe-indigo text-lg"
             >
               Contact Us Today
             </Button>
@@ -151,7 +151,7 @@ export function ContactSection() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white h-12 rounded-lg font-medium"
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white h-14 rounded-xl font-medium transition-all shadow-[0_0_15px_rgba(99,102,241,0.2)] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)]"
               >
                 {isLoading ? (
                   <>

@@ -79,10 +79,26 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-20px)' },
         },
+        'neon-breathe': {
+          '0%, 100%': {
+            boxShadow: '0 0 10px rgba(0, 245, 255, 0.3), 0 0 20px rgba(0, 245, 255, 0.1)',
+          },
+          '50%': { boxShadow: '0 0 20px rgba(0, 245, 255, 0.6), 0 0 40px rgba(0, 245, 255, 0.3)' },
+        },
+        'neon-breathe-indigo': {
+          '0%, 100%': {
+            boxShadow: '0 0 10px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2)',
+          },
+          '50%': {
+            boxShadow: '0 0 20px rgba(99, 102, 241, 0.7), 0 0 40px rgba(99, 102, 241, 0.4)',
+          },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         float: 'float 6s ease-in-out infinite',
+        'neon-breathe': 'neon-breathe 3s ease-in-out infinite',
+        'neon-breathe-indigo': 'neon-breathe-indigo 3s ease-in-out infinite',
       },
     },
   },

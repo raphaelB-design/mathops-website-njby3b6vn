@@ -1,127 +1,454 @@
 import { Outlet, Link } from 'react-router-dom'
 import { useState } from 'react'
-import { ChevronDown, Menu, X, Facebook, Instagram, Linkedin } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Menu, X, Linkedin, Instagram, Facebook } from 'lucide-react'
 
 const NAV_LINKS = [
-  { name: 'Services', href: '#services' },
-  { name: 'Solutions', href: '#solutions' },
-  { name: 'About Us', href: '#about' },
-  { name: 'Case Studies', href: '#case-studies' },
+  { name: 'Serviços', href: '#services' },
+  { name: 'Método', href: '#about' },
+  { name: 'Sobre', href: '#about' },
+  { name: 'Contato', href: '#contact' },
 ]
 
 export default function Layout() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
+  const [open, setOpen] = useState(false)
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#070709] text-white font-sans">
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#070709]/90 backdrop-blur-md">
-        <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" onClick={scrollToTop} className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+    <div
+      style={{
+        display: 'flex',
+        minHeight: '100vh',
+        flexDirection: 'column',
+        background: '#04060A',
+        color: '#F0F4F8',
+        fontFamily: 'Inter, system-ui, sans-serif',
+      }}
+    >
+      {/* ── HEADER ─────────────────────────────────────────────────── */}
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          width: '100%',
+          borderBottom: '0.5px solid rgba(28,42,58,.8)',
+          background: 'rgba(4,6,10,.92)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 1320,
+            margin: '0 auto',
+            padding: '0 48px',
+            height: 72,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Logo */}
+          <Link
+            to="/"
+            onClick={scrollToTop}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}
+          >
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 8,
+                background: 'linear-gradient(135deg, #0A66C2, #00B4D8)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'Syne, sans-serif',
+                fontWeight: 800,
+                fontSize: 18,
+                color: '#fff',
+                letterSpacing: '-0.03em',
+                boxShadow: '0 0 20px rgba(0,180,216,.25)',
+              }}
+            >
               M
             </div>
-            <span className="text-xl font-bold tracking-tight">MathOps</span>
+            <span
+              style={{
+                fontFamily: 'Syne, sans-serif',
+                fontWeight: 800,
+                fontSize: 20,
+                color: '#F0F4F8',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Math<span style={{ color: '#00B4D8' }}>Ops</span>
+            </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
+          {/* Desktop nav */}
+          <nav
+            style={{ display: 'flex', alignItems: 'center', gap: 36 }}
+            className="mo-desktop-nav"
+          >
+            {NAV_LINKS.map((l) => (
               <a
-                key={link.name}
-                href={link.href}
-                className="text-sm font-medium text-gray-300 hover:text-white transition-colors flex items-center gap-1"
+                key={l.name}
+                href={l.href}
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: '#8FA3B8',
+                  textDecoration: 'none',
+                  transition: 'color .2s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#F0F4F8')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#8FA3B8')}
               >
-                {link.name}
-                <ChevronDown className="h-3 w-3 opacity-50" />
+                {l.name}
               </a>
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center">
-            <Button
-              variant="outline"
-              className="border-gray-600 text-white hover:bg-white hover:text-black rounded-full px-6 bg-transparent"
-              asChild
-            >
-              <a href="#contact">Contact Sales</a>
-            </Button>
-          </div>
-
-          <button
-            className="md:hidden p-2 text-gray-300"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          {/* CTA */}
+          <a
+            href="#diagnostico"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 7,
+              padding: '9px 20px',
+              background: '#0A66C2',
+              color: '#fff',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: 13,
+              fontWeight: 600,
+              border: 'none',
+              borderRadius: 7,
+              cursor: 'pointer',
+              textDecoration: 'none',
+              transition: 'background .2s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#0d7ae0')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#0A66C2')}
+            className="mo-desktop-cta"
           >
-            {isMobileMenuOpen ? <X /> : <Menu />}
+            Diagnóstico Gratuito
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setOpen(!open)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#8FA3B8',
+              cursor: 'pointer',
+              padding: 4,
+            }}
+            className="mo-mobile-btn"
+            aria-label="Menu"
+          >
+            {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
 
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-[#070709] border-b border-white/5 p-4 flex flex-col gap-4">
-            {NAV_LINKS.map((link) => (
+        {/* Mobile dropdown */}
+        {open && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              background: '#080D14',
+              borderBottom: '0.5px solid #1C2A3A',
+              padding: '16px 24px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 4,
+            }}
+          >
+            {NAV_LINKS.map((l) => (
               <a
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-base font-medium text-gray-300 py-2 border-b border-white/5"
+                key={l.name}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: '#8FA3B8',
+                  textDecoration: 'none',
+                  padding: '10px 0',
+                  borderBottom: '0.5px solid #1C2A3A',
+                }}
               >
-                {link.name}
+                {l.name}
               </a>
             ))}
-            <Button
-              className="w-full mt-2 border-gray-600 text-white rounded-full bg-transparent hover:bg-white hover:text-black"
-              variant="outline"
-              asChild
+            <a
+              href="#diagnostico"
+              onClick={() => setOpen(false)}
+              style={{
+                marginTop: 12,
+                padding: '11px 0',
+                background: '#0A66C2',
+                color: '#fff',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 14,
+                fontWeight: 600,
+                border: 'none',
+                borderRadius: 7,
+                cursor: 'pointer',
+                textDecoration: 'none',
+                textAlign: 'center',
+              }}
             >
-              <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
-                Contact Sales
-              </a>
-            </Button>
+              Diagnóstico Gratuito
+            </a>
           </div>
         )}
+
+        <style>{`
+          @media (min-width: 768px) { .mo-mobile-btn { display: none !important; } }
+          @media (max-width: 767px) { .mo-desktop-nav, .mo-desktop-cta { display: none !important; } }
+        `}</style>
       </header>
 
-      <main className="flex-1">
+      {/* ── MAIN ───────────────────────────────────────────────────── */}
+      <main style={{ flex: 1 }}>
         <Outlet />
       </main>
 
-      <footer className="bg-[#070709] py-12 border-t border-white/5 mt-auto">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
+      {/* ── FOOTER ─────────────────────────────────────────────────── */}
+      <footer
+        style={{ background: '#04060A', borderTop: '0.5px solid #1C2A3A', padding: '48px 0 32px' }}
+      >
+        <div style={{ maxWidth: 1320, margin: '0 auto', padding: '0 48px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: 40,
+              flexWrap: 'wrap',
+              gap: 24,
+            }}
+          >
+            {/* Brand */}
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 7,
+                    background: 'linear-gradient(135deg, #0A66C2, #00B4D8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Syne, sans-serif',
+                    fontWeight: 800,
+                    fontSize: 15,
+                    color: '#fff',
+                  }}
+                >
                   M
                 </div>
-                <span className="text-lg font-bold">MathOps</span>
+                <span
+                  style={{
+                    fontFamily: 'Syne, sans-serif',
+                    fontWeight: 800,
+                    fontSize: 18,
+                    color: '#F0F4F8',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  Math<span style={{ color: '#00B4D8' }}>Ops</span>
+                </span>
               </div>
-              <p className="text-gray-400 text-sm">Modern B2B data consulting</p>
+              <p
+                style={{
+                  fontFamily: 'IBM Plex Mono, monospace',
+                  fontSize: 11,
+                  color: '#3D5470',
+                  letterSpacing: '.04em',
+                  lineHeight: 1.6,
+                }}
+              >
+                Inteligência decisória baseada em matemática.
+                <br />
+                Clareza. Inteligência. Confiança.
+              </p>
             </div>
-            <div className="flex items-center gap-4">
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-colors"
+
+            {/* Links */}
+            <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap' }}>
+              <div>
+                <div
+                  style={{
+                    fontFamily: 'IBM Plex Mono, monospace',
+                    fontSize: 9,
+                    color: '#3D5470',
+                    letterSpacing: '.1em',
+                    textTransform: 'uppercase',
+                    marginBottom: 14,
+                  }}
+                >
+                  Serviços
+                </div>
+                {[
+                  'Lean Six Sigma',
+                  'Modelagem Matemática',
+                  'Business Intelligence',
+                  'Governança de Dados',
+                  'Memórias de Cálculo',
+                ].map((s) => (
+                  <div
+                    key={s}
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 13,
+                      color: '#8FA3B8',
+                      marginBottom: 8,
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#F0F4F8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#8FA3B8')}
+                  >
+                    {s}
+                  </div>
+                ))}
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontFamily: 'IBM Plex Mono, monospace',
+                    fontSize: 9,
+                    color: '#3D5470',
+                    letterSpacing: '.1em',
+                    textTransform: 'uppercase',
+                    marginBottom: 14,
+                  }}
+                >
+                  Empresa
+                </div>
+                {['Sobre', 'Método', 'Cases', 'Contato'].map((s) => (
+                  <div
+                    key={s}
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 13,
+                      color: '#8FA3B8',
+                      marginBottom: 8,
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = '#F0F4F8')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = '#8FA3B8')}
+                  >
+                    {s}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Social */}
+            <div>
+              <div
+                style={{
+                  fontFamily: 'IBM Plex Mono, monospace',
+                  fontSize: 9,
+                  color: '#3D5470',
+                  letterSpacing: '.1em',
+                  textTransform: 'uppercase',
+                  marginBottom: 14,
+                }}
               >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-colors"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white hover:border-white transition-colors"
-              >
-                <Linkedin className="h-4 w-4" />
-              </a>
+                Redes
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                {[
+                  { Icon: Linkedin, href: '#' },
+                  { Icon: Instagram, href: '#' },
+                  { Icon: Facebook, href: '#' },
+                ].map(({ Icon, href }, i) => (
+                  <a
+                    key={i}
+                    href={href}
+                    style={{
+                      width: 34,
+                      height: 34,
+                      borderRadius: 8,
+                      border: '0.5px solid #1C2A3A',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#3D5470',
+                      textDecoration: 'none',
+                      transition: 'border-color .2s, color .2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#8FA3B8'
+                      e.currentTarget.style.color = '#F0F4F8'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = '#1C2A3A'
+                      e.currentTarget.style.color = '#3D5470'
+                    }}
+                  >
+                    <Icon size={15} />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-xs text-gray-500">
-            <p>Website - www.mathops.com</p>
-            <p>Footer</p>
+
+          {/* Bottom bar */}
+          <div
+            style={{
+              borderTop: '0.5px solid #1C2A3A',
+              paddingTop: 20,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}
+          >
+            <span
+              style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: 10, color: '#3D5470' }}
+            >
+              © {new Date().getFullYear()} MathOps. Todos os direitos reservados.
+            </span>
+            <div style={{ display: 'flex', gap: 20 }}>
+              {['Política de Privacidade', 'Termos de Uso', 'LGPD'].map((t) => (
+                <a
+                  key={t}
+                  href="#"
+                  style={{
+                    fontFamily: 'IBM Plex Mono, monospace',
+                    fontSize: 10,
+                    color: '#3D5470',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#8FA3B8')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#3D5470')}
+                >
+                  {t}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
