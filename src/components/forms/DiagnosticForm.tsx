@@ -23,6 +23,8 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Check, Info } from 'lucide-react'
+import { supabase } from '@/lib/supabase/client'
+import { trackCtaClick } from '@/hooks/use-tracking'
 
 const formSchema = z.object({
   name: z.string().min(2, 'Nome é obrigatório'),
@@ -70,10 +72,46 @@ export function DiagnosticForm({ onSuccess }: { onSuccess?: () => void }) {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true)
-    console.log('[Analytics] Event tracked: form_diagnostic_submitted')
-    console.log('[Form Data]', data)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    const anotacoes = `Funcionários: ${data.employees || 'N/A'} | Urgência: ${data.urgency || 'N/A'}`
+    const mensagemCompleta = `Desafio: ${data.challenge || 'N/A'}\nObjetivo: ${data.objective || 'N/A'}\nMensagem: ${data.message || 'N/A'}`
+    const interessesArray = data.interest ? [data.interest] : []
+
+    const { error } = await supabase.from('leads').insert({
+      nome: data.name,
+      email: data.email,
+      telefone: data.whatsapp || null,
+      empresa: data.company,
+      responsavel: data.role || null,
+      faturamento: data.revenue || null,
+      interesses: interessesArray.length > 0 ? interessesArray : null,
+      mensagem: mensagemCompleta,
+      anotacoes: anotacoes,
+      consentimento_lgpd: true,
+      status: 'novo',
+    })
+
     setIsSubmitting(false)
+
+    if (error) {
+      if (error.message.includes('rate_limit')) {
+        toast({
+          variant: 'destructive',
+          title: 'Limite de envios',
+          description:
+            'Muitos envios detectados. Por favor, aguarde uma hora antes de tentar novamente.',
+        })
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Erro ao enviar',
+          description: 'Ocorreu um erro ao processar seu diagnóstico. Tente novamente.',
+        })
+      }
+      return
+    }
+
+    trackCtaClick('diagnostic_form_submit')
     setIsSuccess(true)
     toast({
       title: 'Diagnóstico recebido!',
@@ -92,13 +130,6 @@ export function DiagnosticForm({ onSuccess }: { onSuccess?: () => void }) {
         <p className="text-[#b0b0c0] max-w-sm">
           Nossa equipe analisará as informações e entrará em contato em breve.
         </p>
-        <Alert className="bg-[#0d0d1a] border-zinc-800 text-[#b0b0c0] mt-8 text-left">
-          <Info className="h-4 w-4 text-[#00bcd4] shrink-0" />
-          <AlertDescription>
-            Nota: Os dados foram salvos localmente (em memória) para direcionamento na próxima etapa
-            e não persistem após recarregar a página.
-          </AlertDescription>
-        </Alert>
       </div>
     )
   }
@@ -212,13 +243,22 @@ export function DiagnosticForm({ onSuccess }: { onSuccess?: () => void }) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-[#b0b0c0]">Faturamento aprox.</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Ex: R$ 50 mi"
-                    className="bg-[#0d0d1a] border-zinc-800 text-white focus-visible:ring-[#00bcd4]"
-                    {...field}
-                  />
-                </FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-[#0d0d1a] border-zinc-800 text-white focus-visible:ring-[#00bcd4]">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="bg-[#0d0d1a] border-zinc-800 text-white">
+                    {['Até R$ 5M', 'R$ 5M – R$ 20M', 'R$ 20M – R$ 100M', 'Acima de R$ 100M'].map(
+                      (o) => (
+                        <SelectItem key={o} value={o}>
+                          {o}
+                        </SelectItem>
+                      ),
+                    )}
+                  </SelectContent>
+                </Select>
                 <FormMessage className="text-red-400" />
               </FormItem>
             )}
@@ -260,11 +300,10 @@ export function DiagnosticForm({ onSuccess }: { onSuccess?: () => void }) {
                   </FormControl>
                   <SelectContent className="bg-[#0d0d1a] border-zinc-800 text-white">
                     {[
-                      'Gestão e processos',
-                      'BI e dashboards',
-                      'Lean Six Sigma',
-                      'Governança',
-                      'Diagnóstico geral',
+                      'Diagnóstico 360',
+                      'Monitoramento mensal',
+                      'TAIE Enterprise',
+                      'Reforma Tributária (CBS/IBS)',
                     ].map((o) => (
                       <SelectItem key={o} value={o}>
                         {o}

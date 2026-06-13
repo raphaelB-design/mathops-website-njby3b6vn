@@ -6,46 +6,26 @@
 
 @layer base {
   :root {
-    --bg-primary: #020604;
-    --bg-surface: rgba(16, 185, 129, 0.02);
-    --glass-bg: rgba(16, 185, 129, 0.03);
-    --glass-border: rgba(16, 185, 129, 0.1);
-    --text-primary: #f8fafc;
-    --text-secondary: rgba(248, 250, 252, 0.7);
-    --text-tertiary: rgba(248, 250, 252, 0.4);
-
-    --accent-emerald: #10b981;
-    --accent-gold: #fbbf24;
-
-    --accent-gradient-start: #fbbf24;
-    --accent-gradient-end: #10b981;
-
-    --hover-bg: rgba(255, 255, 255, 0.05);
-    --active-bg: rgba(255, 255, 255, 0.08);
-    --success: #10b981;
-    --error: #ef4444;
-
-    /* Shadcn Fallbacks */
-    --background: 160 50% 2%;
-    --foreground: 210 40% 98%;
-    --card: 160 50% 3%;
-    --card-foreground: 210 40% 98%;
-    --popover: 160 50% 3%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 151 90% 40%;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 238 82% 59%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 43 96% 56%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 160 20% 10%;
-    --muted-foreground: 160 10% 70%;
-    --accent: 43 96% 56%;
-    --accent-foreground: 0 0% 0%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 5% 15%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 160 10% 15%;
-    --input: 160 10% 15%;
-    --ring: 151 90% 40%;
-    --radius: 1rem;
+    --border: 240 5% 15%;
+    --input: 240 5% 15%;
+    --ring: 238 82% 59%;
+    --radius: 0.5rem;
   }
 
   html {
@@ -53,25 +33,36 @@
   }
 
   body {
-    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] antialiased selection:bg-[#10b981]/30 selection:text-white font-sans;
-  }
-
-  section[aria-label='Notifications alt+T'] {
-    padding: 0 !important;
-    margin: 0 !important;
+    @apply bg-background text-foreground antialiased font-sans;
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)];
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
   }
-
-  .bg-gradient-primary {
-    @apply bg-gradient-to-r from-[var(--accent-gradient-start)] to-[var(--accent-gradient-end)];
-  }
-
   .animate-fade-in-up {
     animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

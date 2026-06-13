@@ -1,122 +1,170 @@
-import { ArrowRight, TrendingUp, Shield, Zap } from 'lucide-react'
-import { useScrollReveal } from '@/hooks/use-scroll-reveal'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Search, Settings, TrendingUp } from 'lucide-react'
 
-const METRICS = [
+const VALUE_PROPS = [
   {
-    value: 'R$1,5M',
-    label: 'Economia evitada por erro de regime tributário em um único caso',
-    accent: 'primary',
+    icon: Search,
+    title: 'Data-Driven Insights',
+    description:
+      'Tailor B2B data consulting to optimize performance, predict trends, and drive smarter business decisions.',
   },
   {
-    value: '70+',
-    label: 'Cruzamentos matemáticos automatizados sobre os dados da empresa',
-    accent: 'secondary',
+    icon: Settings,
+    title: 'Optimized Operations',
+    description:
+      'Optimized B2B data consulting to optimize performance, predict trends, and drive smarter business decisions.',
   },
   {
-    value: '15 dias',
-    label: 'Da ingestão de dados ao relatório executivo validado juridicamente',
-    accent: 'gold',
+    icon: TrendingUp,
+    title: 'Predictive Analytics',
+    description:
+      'Predictive B2B data consulting to realize performance, predict trends, and drive smarter decisions.',
   },
-]
-
-const PILLARS = [
-  { icon: TrendingUp, label: 'Inteligência Tributária' },
-  { icon: Shield, label: 'Conformidade Proativa' },
-  { icon: Zap, label: 'Decisão em Tempo Real' },
 ]
 
 export function HeroSection() {
-  const { ref, isRevealed } = useScrollReveal()
-
   return (
-    <section className="relative min-h-screen flex flex-col justify-center pt-28 pb-20 overflow-hidden grid-pattern noise-texture">
-      {/* Ambient glows */}
-      <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-secondary/8 rounded-full blur-[120px] pointer-events-none" />
+    <section className="bg-[#070709] pt-20 pb-24 relative overflow-hidden">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <div
-        ref={ref}
-        className={cn(
-          'max-w-7xl mx-auto px-6 relative z-10 opacity-0',
-          isRevealed && 'animate-fade-in-up',
-        )}
-      >
-        {/* Eyebrow */}
-        <div className="flex items-center gap-3 mb-8">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/8 text-xs font-semibold text-primary uppercase tracking-widest">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            Inteligência Tributária & Gestão
+      <div className="container mx-auto px-6 max-w-6xl relative z-10">
+        {/* Hero Top */}
+        <div className="grid md:grid-cols-2 gap-12 items-center mb-32">
+          <div className="max-w-xl">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-bold leading-[1.1] mb-6 text-white tracking-tight">
+              Unlock Data's Power
+              <br />
+              for Strategic Growth
+            </h1>
+            <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-md">
+              Tailored B2B data consulting to optimize performance, predict trends, and drive
+              smarter business decisions.
+            </p>
+            <Button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 h-14 rounded-xl text-base font-medium shadow-[0_0_20px_rgba(79,70,229,0.3)] transition-all hover:scale-105"
+              asChild
+            >
+              <a href="#contact">Schedule a Strategy Call</a>
+            </Button>
+          </div>
+
+          <div className="relative aspect-square flex items-center justify-center perspective-[1000px]">
+            <svg
+              className="w-full h-full max-w-[500px]"
+              viewBox="0 0 400 400"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g className="animate-float" style={{ animationDuration: '6s' }}>
+                <path
+                  d="M200 320 L80 260 L200 200 L320 260 Z"
+                  fill="#111115"
+                  stroke="#22d3ee"
+                  strokeWidth="1"
+                  strokeOpacity="0.3"
+                />
+                <path
+                  d="M120 260 L200 220 L280 260"
+                  stroke="#a855f7"
+                  strokeWidth="2"
+                  fill="none"
+                  className="opacity-70"
+                />
+                <circle cx="120" cy="260" r="3" fill="#a855f7" />
+                <circle cx="280" cy="260" r="3" fill="#a855f7" />
+                <path
+                  d="M160 280 L200 300 L240 280"
+                  stroke="#22d3ee"
+                  strokeWidth="1.5"
+                  fill="none"
+                  className="opacity-50"
+                />
+              </g>
+              <g
+                className="animate-float"
+                style={{ animationDuration: '5s', animationDelay: '1s' }}
+              >
+                <path
+                  d="M200 240 L140 210 L140 140 L200 170 Z"
+                  fill="#0d0d12"
+                  stroke="#ffffff"
+                  strokeOpacity="0.1"
+                />
+                <path
+                  d="M200 240 L260 210 L260 140 L200 170 Z"
+                  fill="#09090c"
+                  stroke="#ffffff"
+                  strokeOpacity="0.1"
+                />
+                <path
+                  d="M200 170 L140 140 L200 110 L260 140 Z"
+                  fill="#15151e"
+                  stroke="#22d3ee"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M200 170 L140 140 L200 110 L260 140 Z"
+                  fill="url(#cube-grad)"
+                  className="opacity-40"
+                />
+              </g>
+              <g
+                className="animate-float"
+                style={{ animationDuration: '7s', animationDelay: '0.5s' }}
+              >
+                <path
+                  d="M340 160 L280 130 L320 110 L380 140 Z"
+                  fill="#111115"
+                  stroke="#a855f7"
+                  strokeWidth="1"
+                  strokeOpacity="0.5"
+                />
+                <path d="M300 135 L340 120" stroke="#a855f7" strokeWidth="2" />
+                <circle cx="345" cy="115" r="2" fill="#22d3ee" />
+              </g>
+              <g
+                className="animate-float"
+                style={{ animationDuration: '5.5s', animationDelay: '1.5s' }}
+              >
+                <path
+                  d="M120 280 L60 250 L100 230 L160 260 Z"
+                  fill="#111115"
+                  stroke="#22d3ee"
+                  strokeWidth="1"
+                  strokeOpacity="0.5"
+                />
+                <path
+                  d="M80 250 Q 110 230 140 255"
+                  fill="none"
+                  stroke="#22d3ee"
+                  strokeWidth="1.5"
+                />
+              </g>
+              <defs>
+                <linearGradient
+                  id="cube-grad"
+                  x1="140"
+                  y1="140"
+                  x2="260"
+                  y2="140"
+                  gradientUnits="userSpaceOnUse"
+                >
+                  <stop stopColor="#22d3ee" />
+                  <stop offset="1" stopColor="#a855f7" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </div>
 
-        {/* Headline */}
-        <div className="max-w-4xl mb-8">
-          <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] text-foreground">
-            Dados que revelam
-            <br />
-            <span className="text-gradient">créditos invisíveis</span>
-            <br />
-            e riscos ocultos.
-          </h1>
-        </div>
-
-        {/* Subheadline */}
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-12 leading-relaxed font-medium">
-          Cruzamos matematicamente todas as obrigações fiscais da sua empresa — SPED, DCTFWeb,
-          EFD-Reinf, NF-e, folha e financeiro — com 70+ verificações que a contabilidade
-          convencional não executa.
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-20">
-          <a
-            href="#taie"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-primary text-white font-semibold text-sm glow-primary hover:opacity-90 transition-all duration-200 group"
-          >
-            Ver como funciona
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-          </a>
-          <a
-            href="#contato"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border border-white/10 bg-white/[0.03] text-foreground font-semibold text-sm hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
-          >
-            Agendar diagnóstico gratuito
-          </a>
-        </div>
-
-        {/* Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/[0.04] rounded-2xl overflow-hidden border border-white/[0.06]">
-          {METRICS.map((m, i) => (
-            <div
-              key={i}
-              className="bg-card/60 backdrop-blur-sm p-8 hover:bg-card/80 transition-colors group"
-            >
-              <p
-                className={cn(
-                  'font-display text-4xl font-bold mb-2',
-                  m.accent === 'primary' && 'text-gradient',
-                  m.accent === 'secondary' &&
-                    'bg-clip-text text-transparent bg-gradient-to-r from-secondary to-primary',
-                  m.accent === 'gold' && 'text-gradient-gold',
-                )}
-              >
-                {m.value}
-              </p>
-              <p className="text-sm text-muted-foreground leading-snug">{m.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Pillars */}
-        <div className="flex flex-wrap gap-3 mt-8">
-          {PILLARS.map((p, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02] text-sm text-muted-foreground"
-            >
-              <p.icon className="h-3.5 w-3.5 text-primary" />
-              {p.label}
+        {/* Value Proposition Bottom */}
+        <div className="grid md:grid-cols-3 gap-12 border-t border-white/5 pt-16">
+          {VALUE_PROPS.map((prop, idx) => (
+            <div key={idx} className="flex flex-col items-start text-left">
+              <prop.icon className="h-8 w-8 text-white mb-6" strokeWidth={1} />
+              <h3 className="text-xl font-bold text-white mb-3">{prop.title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{prop.description}</p>
             </div>
           ))}
         </div>
